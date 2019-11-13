@@ -1,0 +1,85 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class GridManager : MonoBehaviour
+{
+    public enum LevelSizes
+    {
+        Small = 10,
+        Medium = 15,
+        Huge = 20
+    }
+    public List<GameObject> levelGrid = new List<GameObject>();
+    public int gridSize;
+    public int xAxisGrid;
+    public int yAxisGrid = 5;
+    public int zAxisGrid;
+    public GameObject gridSpacePrefab;
+    public LevelSizes levelSize;
+    // Start is called before the first frame update
+    void Start()
+    {
+        yAxisGrid = 5;
+        levelSize = LevelSizes.Small;
+        SizeCheck();
+        xAxisGrid = gridSize;
+        zAxisGrid = gridSize;
+    }
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            Debug.Log("hjsavfsa");
+            GenerateGrid();
+        }
+    }
+    void SizeCheck()
+    {
+        int size = 0;
+        if (levelSize == LevelSizes.Small)
+        {
+            size = 10;
+        }
+
+        if (levelSize == LevelSizes.Medium)
+        {
+            size = 15;
+        }
+
+        if (levelSize == LevelSizes.Huge)
+        {
+            size = 15;
+        }
+
+        gridSize = size;
+      
+    }
+
+    void GenerateGrid()
+    {
+        Debug.Log("enter");
+
+        for (int i = 0; i < yAxisGrid; i++)
+        {
+            Debug.Log("Test1");
+            for (int j = 0; j < zAxisGrid; j++)
+            {
+                Debug.Log("Test2");
+                for (int k = 0; k < xAxisGrid; k++)
+                {
+                    Debug.Log("Test3");
+                    GameObject newSpace = gridSpacePrefab;
+                    GameObject instance = Instantiate(newSpace,new Vector3(k,i,j),Quaternion.identity);
+                    GridSpaceValues newSpaceValuesInstance = new GridSpaceValues(-1, k, i, j,false,false,false,i);
+                    instance.GetComponent<GridSpace>().values = newSpaceValuesInstance;
+                    levelGrid.Add(instance);
+                   
+                }
+            }
+        }
+    }
+
+  
+}
