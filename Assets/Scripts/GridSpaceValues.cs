@@ -9,8 +9,6 @@ public class GridSpaceValues
     public int xAxis;
     public int yAxis;
     public int zAxis;
-    public bool walkable;
-    public bool canBuildTower;
     public bool hasBuildBlock;
     public int layer;
     
@@ -19,14 +17,12 @@ public class GridSpaceValues
         Defaults();
     }
 
-    public GridSpaceValues(int blockId, int xAxis, int yAxis, int zAxis, bool walkable, bool canBuildTower,bool hasBuildBlock, int layer)
+    public GridSpaceValues(int blockId, int xAxis, int yAxis, int zAxis,bool hasBuildBlock, int layer)
     {
         this.blockId = blockId;
         this.xAxis = xAxis;
         this.yAxis = yAxis;
         this.zAxis = zAxis;
-        this.walkable = walkable;
-        this.canBuildTower = canBuildTower;
         this.hasBuildBlock = hasBuildBlock;
         this.layer = layer;
 
@@ -43,8 +39,7 @@ public class GridSpaceValues
         yAxis = 0;
         zAxis = 0;
         blockId = -1;
-        walkable = false;
-        canBuildTower = false;
+      
     }
 
     // Start is called before the first frame update
@@ -52,6 +47,7 @@ public class GridSpaceValues
     {
         
     }
+    
 
     // Update is called once per frame
     void Update()

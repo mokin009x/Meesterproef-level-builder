@@ -25,14 +25,16 @@ public class GridManager : MonoBehaviour
         SizeCheck();
         xAxisGrid = gridSize;
         zAxisGrid = gridSize;
+        
+        
     }
     // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.K))
         {
-            Debug.Log("hjsavfsa");
             GenerateGrid();
+           
         }
     }
     void SizeCheck()
@@ -54,28 +56,21 @@ public class GridManager : MonoBehaviour
         }
 
         gridSize = size;
-      
     }
 
     void GenerateGrid()
     {
-        Debug.Log("enter");
-
         for (int i = 0; i < yAxisGrid; i++)
         {
-            Debug.Log("Test1");
             for (int j = 0; j < zAxisGrid; j++)
             {
-                Debug.Log("Test2");
                 for (int k = 0; k < xAxisGrid; k++)
                 {
-                    Debug.Log("Test3");
                     GameObject newSpace = gridSpacePrefab;
                     GameObject instance = Instantiate(newSpace,new Vector3(k,i,j),Quaternion.identity);
-                    GridSpaceValues newSpaceValuesInstance = new GridSpaceValues(-1, k, i, j,false,false,false,i);
+                    GridSpaceValues newSpaceValuesInstance = new GridSpaceValues(-1, k, i, j,false,i + 1);
                     instance.GetComponent<GridSpace>().values = newSpaceValuesInstance;
                     levelGrid.Add(instance);
-                   
                 }
             }
         }
