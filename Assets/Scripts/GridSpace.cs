@@ -8,22 +8,28 @@ public class GridSpace : MonoBehaviour
     public GridManager grdManager;
     public GridSpaceValues values;
     public GameObject buildBlock;
+    public Vector3 currentPos;
     // Start is called before the first frame update
     void Start()
     {
         grdManager = GameObject.Find("Managers").GetComponent<GridManager>();
-        grdManager = GameObject.Find("Managers").GetComponent<GridManager>();
+        lvlBuildManager = GameObject.Find("Managers").GetComponent<LevelBuilderManager>();
+        currentPos = this.transform.position;
     }
 
-    public void PlaceBlock(int blockId)
+    public void PlaceBlock(int buildBlockId , Vector3 position)
     {
-        values.blockId = blockId;
+        values.buildBlockId = buildBlockId;
         values.hasBuildBlock = true;
-        GameObject block = lvlBuildManager.buildBlocksPrefabs[blockId];
-        buildBlock = Instantiate(block,transform.position,Quaternion.identity);
-        buildBlock.GetComponent<BuildBlock>().gridSpacePair = this.gameObject;
+        Debug.Log(buildBlockId);
+        GameObject block = lvlBuildManager.buildBlocksPrefabs[buildBlockId];
+        buildBlock = Instantiate(block,position,Quaternion.identity);
+        var test = buildBlock.GetComponent<BuildBlock>();
+        Debug.Log(values.gridId);    
+        test.gridSpacePair = grdManager.levelGrid[values.gridId].GetComponent<GridSpace>();
+        buildBlock.GetComponent<BuildBlock>().pairId = values.gridId;
         lvlBuildManager.levelBlocks.Add(buildBlock);
     }
-
+    
 
 }

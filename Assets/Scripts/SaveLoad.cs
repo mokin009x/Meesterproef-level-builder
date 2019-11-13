@@ -5,17 +5,22 @@ using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
+[Serializable]
 public class SaveLoad
 {
-    static LevelBuilderManager lvlBuilderManager = GameObject.Find("Managers").GetComponent<LevelBuilderManager>();
-
     public static void Save() {     // Saving method
 
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Open(Application.persistentDataPath + "/save.dat", FileMode.OpenOrCreate);
         SaveData saveData = new SaveData();
 
-        saveData.levelBlocks = lvlBuilderManager.levelBlocks;
+        //prefab id
+        saveData.levelBlocksIds = LevelBuilderManager.Instance.levelBLocksIds;
+        //position
+        /*saveData.levelBlocksXAxis = LevelBuilderManager.Instance.levelBlocksXAxis;
+        saveData.levelBlocksYAxis = LevelBuilderManager.Instance.levelBlocksYAxis;
+        saveData.levelBlocksZAxis = LevelBuilderManager.Instance.levelBlocksZAxis;*/
+        saveData.gridIds = LevelBuilderManager.Instance.gridIds;
         /*saveData.lvl = GameManager.instance.lvl;
         saveData.scores = GameManager.instance.scores;*/
 
@@ -32,7 +37,17 @@ public class SaveLoad
             FileStream file = File.Open(Application.persistentDataPath + "/save.dat", FileMode.Open);
             SaveData saveData = (SaveData)bf.Deserialize(file);
 
-            lvlBuilderManager.levelBlocks = saveData.levelBlocks;
+            //prefab id
+            LevelBuilderManager.Instance.levelBLocksIds = saveData.levelBlocksIds;
+            //position
+            /*LevelBuilderManager.Instance.levelBlocksXAxis = saveData.levelBlocksXAxis;
+            LevelBuilderManager.Instance.levelBlocksYAxis = saveData.levelBlocksYAxis;
+            LevelBuilderManager.Instance.levelBlocksZAxis = saveData.levelBlocksZAxis;*/
+            LevelBuilderManager.Instance.gridIds = saveData.gridIds;
+            
+            
+            /*LevelBuilderManager.Instance.levelBlocks = saveData.levelBlocks;
+            LevelBuilderManager.Instance.grdManager.levelGrid = saveData.levelGrid;*/
             /*GameManager.instance.lvl = saveData.lvl;
             GameManager.instance.scores = saveData.scores;*/
 

@@ -1,7 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class GridManager : MonoBehaviour
 {
     public enum LevelSizes
@@ -60,6 +60,7 @@ public class GridManager : MonoBehaviour
 
     void GenerateGrid()
     {
+        int id = 1;
         for (int i = 0; i < yAxisGrid; i++)
         {
             for (int j = 0; j < zAxisGrid; j++)
@@ -68,9 +69,11 @@ public class GridManager : MonoBehaviour
                 {
                     GameObject newSpace = gridSpacePrefab;
                     GameObject instance = Instantiate(newSpace,new Vector3(k,i,j),Quaternion.identity);
-                    GridSpaceValues newSpaceValuesInstance = new GridSpaceValues(-1, k, i, j,false,i + 1);
+                    int gridId = id;
+                    GridSpaceValues newSpaceValuesInstance = new GridSpaceValues(-1, k, i, j,false,i,gridId);
                     instance.GetComponent<GridSpace>().values = newSpaceValuesInstance;
                     levelGrid.Add(instance);
+                    id++;
                 }
             }
         }

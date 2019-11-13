@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GridSpaceValues 
+public class GridSpaceValues
 {
-    public int blockId;
+    public int gridId;
+    public int buildBlockId;
     public int xAxis;
     public int yAxis;
     public int zAxis;
@@ -17,14 +18,15 @@ public class GridSpaceValues
         Defaults();
     }
 
-    public GridSpaceValues(int blockId, int xAxis, int yAxis, int zAxis,bool hasBuildBlock, int layer)
+    public GridSpaceValues(int buildBlockId, int xAxis, int yAxis, int zAxis,bool hasBuildBlock, int layer, int gridId)
     {
-        this.blockId = blockId;
+        this.buildBlockId = buildBlockId;
         this.xAxis = xAxis;
         this.yAxis = yAxis;
         this.zAxis = zAxis;
         this.hasBuildBlock = hasBuildBlock;
         this.layer = layer;
+        this.gridId = gridId;
 
     }
 
@@ -38,7 +40,7 @@ public class GridSpaceValues
         xAxis = 0;
         yAxis = 0;
         zAxis = 0;
-        blockId = -1;
+        buildBlockId = -1;
       
     }
 
