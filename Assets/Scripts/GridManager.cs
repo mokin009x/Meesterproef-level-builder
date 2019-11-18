@@ -60,7 +60,7 @@ public class GridManager : MonoBehaviour
 
     void GenerateGrid()
     {
-        int id = 1;
+        int id = 0;
         for (int i = 0; i < yAxisGrid; i++)
         {
             for (int j = 0; j < zAxisGrid; j++)
