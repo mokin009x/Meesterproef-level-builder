@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public class GridManager : MonoBehaviour
 {
+    public static GridManager Instance;
     public enum LevelSizes
     {
         Small = 10,
@@ -17,6 +18,21 @@ public class GridManager : MonoBehaviour
     public int zAxisGrid;
     public GameObject gridSpacePrefab;
     public LevelSizes levelSize;
+    
+    
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {   
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
+    
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -70,7 +86,8 @@ public class GridManager : MonoBehaviour
                     GameObject newSpace = gridSpacePrefab;
                     GameObject instance = Instantiate(newSpace,new Vector3(k,i,j),Quaternion.identity);
                     int gridId = id;
-                    GridSpaceValues newSpaceValuesInstance = new GridSpaceValues(-1, k, i, j,false,i,gridId);
+                    instance.layer = 8 + i;
+                    GridSpaceValues newSpaceValuesInstance = new GridSpaceValues(gridId);
                     instance.GetComponent<GridSpace>().values = newSpaceValuesInstance;
                     levelGrid.Add(instance);
                     id++;

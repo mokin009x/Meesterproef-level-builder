@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LevelBuilderManager : MonoBehaviour
 {
@@ -11,9 +12,13 @@ public class LevelBuilderManager : MonoBehaviour
     public List<int> levelBLocksIds = new List<int>();
     public List<int> gridIds = new List<int>();
     public List<int> levelBlocksXAxis = new List<int>();
-    public List<int> levelBlocksYAxis = new List<int>();
+    public List<int> levelBlocksYAxis = new List<int>(); 
     public List<int> levelBlocksZAxis = new List<int>();
-    public GridManager grdManager;
+
+    public List<int> monsterPath = new List<int>();
+    
+    public LayerMask currentLayer;
+
     public enum Tools
     {
         None,
@@ -23,10 +28,10 @@ public class LevelBuilderManager : MonoBehaviour
     }
 
     public List<GameObject> levelBlocks = new List<GameObject>();
-    
+    public GameObject monsterPathMarker;
     public List<GameObject> buildBlocksPrefabs = new List<GameObject>();
     
-    public Tools tool;
+    public Tools currentTool;
     public GameObject gridSpaceSelection = null;
     //public GameObject selectedBuildBlockId;
     
@@ -45,12 +50,46 @@ public class LevelBuilderManager : MonoBehaviour
 
     void Start()
     {
-        
-        tool = Tools.BuildBlockPlace;
-        grdManager = GameObject.Find("Managers").GetComponent<GridManager>();
+        currentLayer = SwitchLayer(5);
+        currentTool = Tools.BuildBlockPlace;
     }
 
-   
+    public LayerMask SwitchLayer(int layerId)
+    {
+        LayerMask newLayer = new LayerMask();
+        if (layerId == 1)
+        {
+            
+        }
+        
+        if (layerId == 2)
+        {
+            
+        }
+        
+        if (layerId == 3)
+        {
+            
+        }
+        
+        if (layerId == 4)
+        {
+            
+        }
+        
+        if (layerId == 5)
+        {
+            newLayer = LayerMask.GetMask("Build layer 5");
+        }
+
+        return newLayer;
+    }
+
+    public void ChangeTool(Tools tool)
+    {
+        currentTool = tool;
+    }
+
 
 
     // Update is called once per frame
@@ -64,9 +103,17 @@ public class LevelBuilderManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             //later check if you are not clicking the ui
-            if (tool != Tools.None)
+            if (currentTool != Tools.None)
             {
                 ToolEffects();
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Backspace))
+        {
+            if (currentTool == Tools.MonsterPathCreate)
+            {
+                RemovePath();
             }
         }
 
@@ -104,7 +151,7 @@ public class LevelBuilderManager : MonoBehaviour
             {
                 var blockId = levelBLocksIds[i];
                 var gridId = gridIds[i];
-                var gridSpace = grdManager.levelGrid[gridId].GetComponent<GridSpace>();
+                var gridSpace = GridManager.Instance.levelGrid[gridId].GetComponent<GridSpace>();
                 gridSpace.PlaceBlock(blockId, gridSpace.currentPos);
                 // still need to give states to the blocks after loading level
             }
@@ -114,12 +161,24 @@ public class LevelBuilderManager : MonoBehaviour
 
     void ToolEffects()
     {
-        if (tool == Tools.BuildBlockPlace)
+        if (currentTool == Tools.BuildBlockPlace)
         {
             SelectSpace();
             // place block
             gridSpaceSelection.GetComponent<GridSpace>().PlaceBlock(0, gridSpaceSelection.transform.position);
         }
+
+        if (currentTool == Tools.MonsterPathCreate)
+        {
+            SelectSpace();
+            gridSpaceSelection.GetComponent<GridSpace>().MonsterPathMarkerPlace(monsterPathMarker,gridSpaceSelection.transform.position);
+        }
+    }
+
+    void RemovePath()
+    {
+        // Still needs to reverse the placed marker values on the spaces.
+        monsterPath.RemoveAt(monsterPath.Count - 1);
     }
 
     void SelectSpace()
@@ -127,7 +186,7 @@ public class LevelBuilderManager : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity,currentLayer))
         {
             Debug.Log("hit");
             gridSpaceSelection = hit.collider.gameObject;

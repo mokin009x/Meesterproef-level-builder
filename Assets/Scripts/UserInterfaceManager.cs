@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class UserInterfaceManager : MonoBehaviour
 {
+    
  
     // Start is called before the first frame update
     void Start()
@@ -19,8 +20,23 @@ public class UserInterfaceManager : MonoBehaviour
 
     public void ButtonMethods(int buttonId)
     {
-        if (buttonId == 0)
+        //Tool selection
+        
+        if (buttonId == 0)//Build block place tool
         {
+            LevelBuilderManager.Instance.ChangeTool(LevelBuilderManager.Tools.BuildBlockPlace);
+            Debug.Log("test");
+        }
+        
+        if (buttonId == 1)//Build area assign tool
+        {
+            LevelBuilderManager.Instance.ChangeTool(LevelBuilderManager.Tools.BuildAreaAssign);
+            Debug.Log("test");
+        }
+        
+        if (buttonId == 2)//Monster path create tool
+        {
+            LevelBuilderManager.Instance.ChangeTool(LevelBuilderManager.Tools.MonsterPathCreate);
             Debug.Log("test");
         }
     }

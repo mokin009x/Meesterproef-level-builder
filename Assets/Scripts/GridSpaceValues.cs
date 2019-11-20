@@ -7,27 +7,19 @@ public class GridSpaceValues
 {
     public int gridId;
     public int buildBlockId;
-    public int xAxis;
-    public int yAxis;
-    public int zAxis;
     public bool hasBuildBlock;
-    public int layer;
+    public bool hasMarker;
+    public bool buildArea;
     
     public GridSpaceValues()
     {
         Defaults();
     }
 
-    public GridSpaceValues(int buildBlockId, int xAxis, int yAxis, int zAxis,bool hasBuildBlock, int layer, int gridId)
+    public GridSpaceValues( int gridId)
     {
-        this.buildBlockId = buildBlockId;
-        this.xAxis = xAxis;
-        this.yAxis = yAxis;
-        this.zAxis = zAxis;
-        this.hasBuildBlock = hasBuildBlock;
-        this.layer = layer;
         this.gridId = gridId;
-
+        Defaults();
     }
 
     void Awake()
@@ -37,9 +29,10 @@ public class GridSpaceValues
 
     void Defaults()
     {
-        xAxis = 0;
-        yAxis = 0;
-        zAxis = 0;
+        
+        hasBuildBlock = false;
+        hasMarker = false;
+        buildArea = false;
         buildBlockId = -1;
       
     }
