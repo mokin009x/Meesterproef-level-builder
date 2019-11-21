@@ -29,15 +29,17 @@ public class LevelBuilderManager : MonoBehaviour
 
     public List<GameObject> levelBlocks = new List<GameObject>();
     public GameObject monsterPathMarker;
+    public GameObject buildAreaMarker;
     public List<GameObject> buildBlocksPrefabs = new List<GameObject>();
     
     public Tools currentTool;
     public GameObject gridSpaceSelection = null;
-    //public GameObject selectedBuildBlockId;
-    
+    public int currentLayerId = 5;
+
     // Start is called before the first frame update
     private void Awake()
     {
+        currentLayerId = 5;
         if (Instance != null && Instance != this)
         {   
             Destroy(this.gameObject);
@@ -50,7 +52,7 @@ public class LevelBuilderManager : MonoBehaviour
 
     void Start()
     {
-        currentLayer = SwitchLayer(5);
+        currentLayer = SwitchLayer(currentLayerId);
         currentTool = Tools.BuildBlockPlace;
     }
 
@@ -59,22 +61,22 @@ public class LevelBuilderManager : MonoBehaviour
         LayerMask newLayer = new LayerMask();
         if (layerId == 1)
         {
-            
+            newLayer = LayerMask.GetMask("Build layer 1");
         }
         
         if (layerId == 2)
         {
-            
+            newLayer = LayerMask.GetMask("Build layer 2");
         }
         
         if (layerId == 3)
         {
-            
+            newLayer = LayerMask.GetMask("Build layer 3");
         }
         
         if (layerId == 4)
         {
-            
+            newLayer = LayerMask.GetMask("Build layer 4");
         }
         
         if (layerId == 5)
@@ -157,6 +159,28 @@ public class LevelBuilderManager : MonoBehaviour
             }
             
         }
+        //camera and layers
+       
+        if (Input.GetKeyDown(KeyCode.Equals))
+        {
+            if (currentLayerId >= 1 && currentLayerId < 5)
+            {
+                currentLayerId = currentLayerId + 1;
+                
+                var newLayer = currentLayerId;
+                currentLayer = SwitchLayer(newLayer);
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Minus))
+        {
+            if (currentLayerId <= 5 && currentLayerId > 1)
+            {
+                currentLayerId = currentLayerId - 1;
+                var newLayer = currentLayerId;
+                currentLayer = SwitchLayer(newLayer);
+            }
+        }
     }
 
     void ToolEffects()
@@ -172,6 +196,13 @@ public class LevelBuilderManager : MonoBehaviour
         {
             SelectSpace();
             gridSpaceSelection.GetComponent<GridSpace>().MonsterPathMarkerPlace(monsterPathMarker,gridSpaceSelection.transform.position);
+        }
+
+        if (currentTool == Tools.BuildAreaAssign)
+        { 
+            SelectSpace();
+            gridSpaceSelection.GetComponent<GridSpace>().BuildAreaAssign(buildAreaMarker);
+
         }
     }
 
