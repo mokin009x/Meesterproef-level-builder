@@ -6,17 +6,14 @@ using UnityEngine.UI;
 
 public class LevelBuilderManager : MonoBehaviour
 {
-    
     public static LevelBuilderManager Instance;
     // lists for saving
     public List<int> levelBLocksIds = new List<int>();
     public List<int> gridIds = new List<int>();
-    public List<int> levelBlocksXAxis = new List<int>();
-    public List<int> levelBlocksYAxis = new List<int>(); 
-    public List<int> levelBlocksZAxis = new List<int>();
+    
 
     public List<int> monsterPath = new List<int>();
-    
+    //
     public LayerMask currentLayer;
 
     public enum Tools
@@ -27,11 +24,18 @@ public class LevelBuilderManager : MonoBehaviour
         BuildAreaAssign
     }
 
+    // current level
     public List<GameObject> levelBlocks = new List<GameObject>();
+    
+    //tools and prefabs
+    public bool cameraRotating = false;
+    public Quaternion newCameraRotation;
+    public Quaternion oldCameraRotation;
+    public float cameraSpeed = 0.5f;
+    public GameObject cameraMarker;
     public GameObject monsterPathMarker;
     public GameObject buildAreaMarker;
     public List<GameObject> buildBlocksPrefabs = new List<GameObject>();
-    
     public Tools currentTool;
     public GameObject gridSpaceSelection = null;
     public int currentLayerId = 5;
@@ -102,6 +106,7 @@ public class LevelBuilderManager : MonoBehaviour
 
     void Controls()
     {
+        //tool controls and tool debug
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             //later check if you are not clicking the ui
@@ -109,6 +114,12 @@ public class LevelBuilderManager : MonoBehaviour
             {
                 ToolEffects();
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            SelectSpace();
+            gridSpaceSelection.GetComponent<GridSpace>().RemoveBlock();
         }
 
         if (Input.GetKeyDown(KeyCode.Backspace))
@@ -119,6 +130,69 @@ public class LevelBuilderManager : MonoBehaviour
             }
         }
 
+        // camera controls
+        if (Input.GetKey(KeyCode.W))
+        {
+            MoveCamera("Forwards");
+            
+        }
+        
+        if (Input.GetKey(KeyCode.A))
+        {
+            MoveCamera("Left");
+            
+        }
+        
+        if (Input.GetKey(KeyCode.S))
+        {
+            MoveCamera("Backwards");
+            
+        }
+        
+        if (Input.GetKey(KeyCode.D))
+        {
+            MoveCamera("Right");
+            
+        }
+        
+        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A))
+        {
+            MoveCamera("Left and Forwards");
+            
+        }
+        
+        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D))
+        {
+            MoveCamera("Right and Forwards");
+            
+        }
+        
+        if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.S))
+        {
+            MoveCamera("Right and Backwards");
+            
+        }
+        
+        if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.S))
+        {
+            MoveCamera("left and Backwards");
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            RotateCamera("Clockwise");
+        }
+        
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            RotateCamera("Counter Clockwise");
+
+        }
+        
+        
+        
+        
+        // save level( to be put in a method for button later)
         if (Input.GetKeyDown(KeyCode.P))
         {
             foreach (var levelBlock in levelBlocks)
@@ -126,19 +200,14 @@ public class LevelBuilderManager : MonoBehaviour
                 BuildBlock instance = levelBlock.GetComponent<BuildBlock>();
                 var blockId = instance.buildBlockId;
                 var gridId = instance.pairId;
-                var pos = instance.transform.position;
-                var xAxis = pos.x;
-                var yAxis = pos.y;
-                var zAxis = pos.z;
                 
-                levelBlocksXAxis.Add(Mathf.FloorToInt(xAxis));
-                levelBlocksYAxis.Add(Mathf.FloorToInt(yAxis));
-                levelBlocksZAxis.Add(Mathf.FloorToInt(zAxis));
                 levelBLocksIds.Add(blockId);
                 gridIds.Add(gridId);
             }
             SaveLoad.Save();
         }
+
+        // load level( to be put in a method for button later)
 
         if (Input.GetKeyDown(KeyCode.L))
         {
@@ -223,6 +292,93 @@ public class LevelBuilderManager : MonoBehaviour
             gridSpaceSelection = hit.collider.gameObject;
         }
     }
+    
 
+    public void MoveCamera(string direction)
+    {
+        Vector3 forward = cameraMarker.transform.forward * cameraSpeed; ;
+        Vector3 left = -cameraMarker.transform.right * cameraSpeed;;
+        Vector3 backwards = -cameraMarker.transform.forward * cameraSpeed;;        
+        Vector3 right = cameraMarker.transform.right * cameraSpeed;;
+
+        
+        Vector3 moveDirection = new Vector3();
+        
+        if (direction == "Forwards")
+        {
+            moveDirection =  forward;
+        }
+        
+        if (direction == "Left")
+        {
+            moveDirection =  left;
+        }
+        
+        if (direction == "Backwards")
+        {
+            moveDirection =   backwards;
+        }
+        
+        if (direction == "Right")
+        {
+            moveDirection =  right;
+        }
+        
+        if (direction == "Left and Forwards")
+        {
+            moveDirection =  left + forward;
+        }
+        
+        if (direction == "Right and Forwards")
+        {
+            moveDirection =  right + forward;
+        } 
+        
+        if (direction == "Right and Backwards")
+        {
+            moveDirection =  right + backwards;
+        }
+        
+        if (direction == "left and Backwards")
+        {
+            moveDirection =  left + backwards;
+        }
+        
+        
+        Debug.Log("end of move camera");
+        cameraMarker.GetComponent<Rigidbody>().velocity = moveDirection;
+    }
+
+    public void RotateCamera(string direction)
+    {
+        if (direction == "Clockwise")
+        {
+            if (cameraRotating == false)
+            {
+                cameraRotating = true;
+                StartCoroutine(RotateCam(Vector3.up * 90, 0.8f));
+            }
+        }
+        
+        if (direction == "Counter Clockwise")
+        {
+            if (cameraRotating == false)
+            {
+                cameraRotating = true;
+                StartCoroutine(RotateCam(Vector3.up * -90, 0.8f));
+            }
+        }
+    }
+
+    IEnumerator RotateCam(Vector3 byAngles, float inTime) 
+    {    var fromAngle = cameraMarker.transform.rotation;
+        var toAngle = Quaternion.Euler(cameraMarker.transform.eulerAngles + byAngles);
+        for(var t = 0f; t <= 1; t += Time.deltaTime/inTime) {
+            cameraMarker.transform.rotation = Quaternion.Slerp(fromAngle, toAngle, t);
+            yield return null;
+        }
+        cameraMarker.transform.rotation = toAngle;
+        cameraRotating = false;
+    }
 }
 

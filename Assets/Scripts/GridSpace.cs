@@ -30,6 +30,17 @@ public class GridSpace : MonoBehaviour
         }
     }
 
+    public void RemoveBlock()
+    {
+        if (values.hasBuildBlock == true)
+        {
+            Destroy(buildBlock);
+            values.buildBlockId = -1;
+            values.hasBuildBlock = false;
+            LevelBuilderManager.Instance.levelBlocks.Remove(buildBlock);
+        }
+    }
+
     public void MonsterPathMarkerPlace(GameObject marker, Vector3 position)
     {
         if (values.hasMarker != true)

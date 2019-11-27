@@ -96,5 +96,26 @@ public class GridManager : MonoBehaviour
         }
     }
 
-  
+    public int GetGridSize()
+    {
+        int size = 0;
+        if (levelSize == LevelSizes.Small)
+        {
+            size = 10;
+        }
+
+        if (levelSize == LevelSizes.Medium)
+        {
+            size = 15;
+        }
+
+        if (levelSize == LevelSizes.Huge)
+        {
+            size = 15;
+        }
+
+        return size;
+    }
+
+
 }
