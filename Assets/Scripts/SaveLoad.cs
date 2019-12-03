@@ -14,15 +14,10 @@ public class SaveLoad
         FileStream file = File.Open(Application.persistentDataPath + "/save.dat", FileMode.OpenOrCreate);
         SaveData saveData = new SaveData();
 
-        //prefab id
+       
         saveData.levelBlocksIds = LevelBuilderManager.Instance.levelBLocksIds;
-        //position
-        /*saveData.levelBlocksXAxis = LevelBuilderManager.Instance.levelBlocksXAxis;
-        saveData.levelBlocksYAxis = LevelBuilderManager.Instance.levelBlocksYAxis;
-        saveData.levelBlocksZAxis = LevelBuilderManager.Instance.levelBlocksZAxis;*/
         saveData.gridIds = LevelBuilderManager.Instance.gridIds;
-        /*saveData.lvl = GameManager.instance.lvl;
-        saveData.scores = GameManager.instance.scores;*/
+      
 
         bf.Serialize(file, saveData);
         Debug.Log("Saved File: " + file.Name);
@@ -37,19 +32,12 @@ public class SaveLoad
             FileStream file = File.Open(Application.persistentDataPath + "/save.dat", FileMode.Open);
             SaveData saveData = (SaveData)bf.Deserialize(file);
 
-            //prefab id
+            
             LevelBuilderManager.Instance.levelBLocksIds = saveData.levelBlocksIds;
-            //position
-            /*LevelBuilderManager.Instance.levelBlocksXAxis = saveData.levelBlocksXAxis;
-            LevelBuilderManager.Instance.levelBlocksYAxis = saveData.levelBlocksYAxis;
-            LevelBuilderManager.Instance.levelBlocksZAxis = saveData.levelBlocksZAxis;*/
             LevelBuilderManager.Instance.gridIds = saveData.gridIds;
             
             
-            /*LevelBuilderManager.Instance.levelBlocks = saveData.levelBlocks;
-            LevelBuilderManager.Instance.grdManager.levelGrid = saveData.levelGrid;*/
-            /*GameManager.instance.lvl = saveData.lvl;
-            GameManager.instance.scores = saveData.scores;*/
+        
 
             Debug.Log("Loaded File: " + file.Name);
             file.Close();

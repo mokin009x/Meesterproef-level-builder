@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class LevelBuilderManager : MonoBehaviour
@@ -63,6 +64,7 @@ public class LevelBuilderManager : MonoBehaviour
     public LayerMask SwitchLayer(int layerId)
     {
         LayerMask newLayer = new LayerMask();
+        
         if (layerId == 1)
         {
             newLayer = LayerMask.GetMask("Build layer 1");
@@ -112,7 +114,10 @@ public class LevelBuilderManager : MonoBehaviour
             //later check if you are not clicking the ui
             if (currentTool != Tools.None)
             {
-                ToolEffects();
+                if (!EventSystem.current.IsPointerOverGameObject())
+                {
+                    ToolEffects();
+                }
             }
         }
 
@@ -238,6 +243,7 @@ public class LevelBuilderManager : MonoBehaviour
                 
                 var newLayer = currentLayerId;
                 currentLayer = SwitchLayer(newLayer);
+                ChangeGridVisibility();
             }
         }
 
@@ -248,6 +254,7 @@ public class LevelBuilderManager : MonoBehaviour
                 currentLayerId = currentLayerId - 1;
                 var newLayer = currentLayerId;
                 currentLayer = SwitchLayer(newLayer);
+                ChangeGridVisibility();
             }
         }
     }
@@ -283,6 +290,11 @@ public class LevelBuilderManager : MonoBehaviour
 
     void SelectSpace()
     {
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+        
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         
@@ -291,6 +303,7 @@ public class LevelBuilderManager : MonoBehaviour
             Debug.Log("hit");
             gridSpaceSelection = hit.collider.gameObject;
         }
+        
     }
     
 
@@ -345,7 +358,6 @@ public class LevelBuilderManager : MonoBehaviour
         }
         
         
-        Debug.Log("end of move camera");
         cameraMarker.GetComponent<Rigidbody>().velocity = moveDirection;
     }
 
@@ -370,6 +382,22 @@ public class LevelBuilderManager : MonoBehaviour
         }
     }
 
+    public void SaveLevel()
+    {
+        foreach (var levelBlock in levelBlocks)
+        {
+            BuildBlock instance = levelBlock.GetComponent<BuildBlock>();
+            var blockId = instance.buildBlockId;
+            var gridId = instance.pairId;
+                
+            levelBLocksIds.Add(blockId);
+            gridIds.Add(gridId);
+        }
+        SaveLoad.Save();
+    }
+
+ 
+
     IEnumerator RotateCam(Vector3 byAngles, float inTime) 
     {    var fromAngle = cameraMarker.transform.rotation;
         var toAngle = Quaternion.Euler(cameraMarker.transform.eulerAngles + byAngles);
@@ -379,6 +407,25 @@ public class LevelBuilderManager : MonoBehaviour
         }
         cameraMarker.transform.rotation = toAngle;
         cameraRotating = false;
+    }
+
+    public void ChangeGridVisibility()
+    {
+        foreach (var space in GridManager.Instance.levelGrid)
+        {
+
+            if ((currentLayer & 1 << space.gameObject.layer) != 1 << space.gameObject.layer)
+            {
+                space.GetComponent<MeshRenderer>().enabled = false;
+                space.GetComponent<BoxCollider>().enabled = false;
+            }
+            else
+            {
+                space.GetComponent<MeshRenderer>().enabled = true;
+                space.GetComponent<BoxCollider>().enabled = true;
+            }
+
+        }
     }
 }
 
