@@ -15,9 +15,10 @@ public class SaveLoad
         SaveData saveData = new SaveData();
 
        
-        saveData.levelBlocksIds = LevelBuilderManager.Instance.levelBLocksIds;
-        saveData.gridIds = LevelBuilderManager.Instance.gridIds;
-      
+        saveData.levelBlocksIds = LevelBuildAndPlayManager.Instance.levelBLocksIds;
+        saveData.gridIds = LevelBuildAndPlayManager.Instance.gridIds;
+        saveData.monsterPath = LevelBuildAndPlayManager.Instance.monsterPath;
+        saveData.buildArea = LevelBuildAndPlayManager.Instance.buildArea;
 
         bf.Serialize(file, saveData);
         Debug.Log("Saved File: " + file.Name);
@@ -33,9 +34,10 @@ public class SaveLoad
             SaveData saveData = (SaveData)bf.Deserialize(file);
 
             
-            LevelBuilderManager.Instance.levelBLocksIds = saveData.levelBlocksIds;
-            LevelBuilderManager.Instance.gridIds = saveData.gridIds;
-            
+            LevelBuildAndPlayManager.Instance.levelBLocksIds = saveData.levelBlocksIds;
+            LevelBuildAndPlayManager.Instance.gridIds = saveData.gridIds;
+            LevelBuildAndPlayManager.Instance.monsterPath = saveData.monsterPath;
+            LevelBuildAndPlayManager.Instance.buildArea = saveData.buildArea;
             
         
 

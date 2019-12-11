@@ -9,7 +9,6 @@ public class BuildBlock : MonoBehaviour
     public int pairId;
     public int buildBlockId;
     public bool walkable;
-    public bool canBuildTower;
 
     void Start()
     {

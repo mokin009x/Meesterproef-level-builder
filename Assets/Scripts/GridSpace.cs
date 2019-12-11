@@ -13,20 +13,20 @@ public class GridSpace : MonoBehaviour
         currentPos = this.transform.position;
     }
 
-    public void PlaceBlock(int buildBlockId , Vector3 position)
+    public void PlaceBlock(List<GameObject> prefabList,int buildBlockId , Vector3 position)
     {
         if (values.hasBuildBlock != true)
         {
-            values.buildBlockId = buildBlockId;
             values.hasBuildBlock = true;
             
-            GameObject blockPrefab = LevelBuilderManager.Instance.buildBlocksPrefabs[buildBlockId];
-            buildBlock = Instantiate(blockPrefab,position,Quaternion.identity);
+            GameObject blockPrefab = prefabList[buildBlockId];
+            buildBlock = Instantiate(blockPrefab,position,blockPrefab.transform.rotation);
             
             BuildBlock buildBlockClass = buildBlock.GetComponent<BuildBlock>();
             buildBlockClass.gridSpacePair = GridManager.Instance.levelGrid[values.gridId].GetComponent<GridSpace>();
             buildBlock.GetComponent<BuildBlock>().pairId = values.gridId;
-            LevelBuilderManager.Instance.levelBlocks.Add(buildBlock); 
+            buildBlock.GetComponent<BuildBlock>().buildBlockId = buildBlockId;
+            LevelBuildAndPlayManager.Instance.levelBlocks.Add(buildBlock); 
         }
     }
 
@@ -35,9 +35,8 @@ public class GridSpace : MonoBehaviour
         if (values.hasBuildBlock == true)
         {
             Destroy(buildBlock);
-            values.buildBlockId = -1;
             values.hasBuildBlock = false;
-            LevelBuilderManager.Instance.levelBlocks.Remove(buildBlock);
+            LevelBuildAndPlayManager.Instance.levelBlocks.Remove(buildBlock);
         }
     }
 
@@ -48,8 +47,10 @@ public class GridSpace : MonoBehaviour
             values.hasMarker = true;
 
             Vector3 offset = new Vector3(position.x, position.y + 1, position.z);
-            Instantiate(marker, offset, Quaternion.identity);  
-            LevelBuilderManager.Instance.monsterPath.Add(values.gridId);
+            GameObject instance = Instantiate(marker, offset, Quaternion.identity);  
+            LevelBuildAndPlayManager.Instance.monsterPath.Add(values.gridId);
+            LevelBuildAndPlayManager.Instance.monsterPathPos.Add(instance);
+            
         }
     }
 
@@ -58,13 +59,11 @@ public class GridSpace : MonoBehaviour
         if (values.buildArea != true)
         {
             values.buildArea = true;
-            gameObject.isStatic = true;
-            
+            // make block block static for navMesh
+            //gameObject.isStatic = true;
+            LevelBuildAndPlayManager.Instance.buildArea.Add(values.gridId);
         }
-        else
-        {
-            values.buildArea = false;
-        }
+        
     }
 
 

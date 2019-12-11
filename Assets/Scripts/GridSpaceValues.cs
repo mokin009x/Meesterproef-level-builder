@@ -6,10 +6,10 @@ using UnityEngine;
 public class GridSpaceValues
 {
     public int gridId;
-    public int buildBlockId;
     public bool hasBuildBlock;
     public bool hasMarker;
     public bool buildArea;
+    public bool hasTower;
     
     public GridSpaceValues()
     {
@@ -33,8 +33,8 @@ public class GridSpaceValues
         hasBuildBlock = false;
         hasMarker = false;
         buildArea = false;
-        buildBlockId = -1;
-      
+        hasTower = false;
+
     }
 
     // Start is called before the first frame update

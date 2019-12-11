@@ -8,11 +8,13 @@ public class SaveData
 {
     //prefab id
     public List<int> levelBlocksIds;
-    //position
-    /*public List<int> levelBlocksXAxis;
-    public List<int> levelBlocksYAxis;
-    public List<int> levelBlocksZAxis;*/
-    //
+    
+    //block positions
     public List<int> gridIds;
 
+    //Monster path markers (accessed by number in grid)
+    public List<int> monsterPath;
+    
+    //buildArea (accessed by number in grid)
+    public List<int> buildArea;
 }

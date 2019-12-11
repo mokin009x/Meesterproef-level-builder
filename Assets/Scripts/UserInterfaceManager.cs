@@ -4,12 +4,29 @@ using UnityEngine;
 
 public class UserInterfaceManager : MonoBehaviour
 {
+    public static UserInterfaceManager Instance;
+    public GameObject mainUi;
+    public GameObject playUi;
     public GameObject cameraUiButtonsToggle;
     // Categories
     public GameObject buildBlocksToggle;
     public GameObject decorationBlocksToggle;
     public GameObject specialBlocksToggle;
     // Start is called before the first frame update
+    
+    
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {   
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
+    
     void Start()
     {
         CatalogueReset();
@@ -28,35 +45,35 @@ public class UserInterfaceManager : MonoBehaviour
         
         if (buttonId == 0)//Build block place tool
         {
-            LevelBuilderManager.Instance.ChangeTool(LevelBuilderManager.Tools.BuildBlockPlace);
+            LevelBuildAndPlayManager.Instance.ChangeTool(LevelBuildAndPlayManager.Tools.BuildBlockPlace);
             Debug.Log("test");
         }
         
         if (buttonId == 1)//Build area assign tool
         {
-            LevelBuilderManager.Instance.ChangeTool(LevelBuilderManager.Tools.BuildAreaAssign);
+            LevelBuildAndPlayManager.Instance.ChangeTool(LevelBuildAndPlayManager.Tools.BuildAreaAssign);
             Debug.Log("test");
         }
         
         if (buttonId == 2)//Monster path create tool
         {
-            LevelBuilderManager.Instance.ChangeTool(LevelBuilderManager.Tools.MonsterPathCreate);
+            LevelBuildAndPlayManager.Instance.ChangeTool(LevelBuildAndPlayManager.Tools.MonsterPathCreate);
             Debug.Log("test");
         }
         
         if (buttonId == 3)//Save button 
         {
-            LevelBuilderManager.Instance.SaveLevel();
+            LevelBuildAndPlayManager.Instance.SaveLevel();
         }
 
         if (buttonId == 4)//Rotate Cam Clockwise
         {
-            LevelBuilderManager.Instance.RotateCamera("Clockwise");
+            LevelBuildAndPlayManager.Instance.RotateCamera("Clockwise");
         }
 
         if (buttonId == 5)// Rotate Cam CounterClockwise
         {
-            LevelBuilderManager.Instance.RotateCamera("Counter Clockwise");
+            LevelBuildAndPlayManager.Instance.RotateCamera("Counter Clockwise");
         }
 
         if (buttonId == 6)//Camera Buttons Toggle
@@ -82,6 +99,12 @@ public class UserInterfaceManager : MonoBehaviour
             CatalogueReset();
             specialBlocksToggle.SetActive(true);
         }
+    }
+
+    public void SelectBuildBlock(int prefabId)
+    {
+        LevelBuildAndPlayManager.Instance.selectedBuildBlockId = prefabId;
+        //LevelBuildAndPlayManager.Instance.selectedBuildBlock = LevelBuildAndPlayManager.Instance.buildBlocksPrefabs[prefabId];
     }
 
     public void CatalogueReset()

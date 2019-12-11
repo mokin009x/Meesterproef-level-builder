@@ -50,7 +50,7 @@ public class GridManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.K))
         {
             GenerateGrid();
-            LevelBuilderManager.Instance.ChangeGridVisibility();    
+            LevelBuildAndPlayManager.Instance.ChangeGridVisibility();    
            
         }
     }
