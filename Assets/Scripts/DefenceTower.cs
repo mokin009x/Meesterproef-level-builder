@@ -6,16 +6,30 @@ using UnityEngine;
 public class DefenceTower : MonoBehaviour
 {
     public Transform target;
-    public Transform partToRotate;
+    //public bool hasTarget = false;
+    
 
+    [Header("Attributes")]
     public float range = 4f;
+    public float fireRate = 1f;
+    private float _fireRateTimer = 0f;
+    
+    [Header("Unity Setup Fields")] 
+    public float turnSpeed = 10;
+    public Transform partToRotate;
+    
+    public GameObject bulletPrefab;
+    public Transform firePoint;
+    public Transform fireRotation;
+    
+
     // Start is called before the first frame update
-    void Start()
+    public  void Start()
     {
         InvokeRepeating(nameof(UpdateTarget), 0f, 0.5f);
     }
 
-    void UpdateTarget()
+    public void UpdateTarget()
     {
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
 
@@ -42,8 +56,9 @@ public class DefenceTower : MonoBehaviour
         }
     }
 
+    
     // Update is called once per frame
-    void Update()
+    public  void Update()
     {
         if (target == null)
         {
@@ -52,8 +67,29 @@ public class DefenceTower : MonoBehaviour
 
         Vector3 dir = target.position - transform.position;
         Quaternion lookRotation = Quaternion.LookRotation(dir);
-        Vector3 rotation = lookRotation.eulerAngles;
+        Vector3 rotation = Quaternion.Lerp(partToRotate.rotation, lookRotation, Time.deltaTime * turnSpeed).eulerAngles;
         partToRotate.rotation =  Quaternion.Euler(0f, rotation.y, 0f);
+
+        if (_fireRateTimer <= 0)
+        {
+            Shoot();
+            _fireRateTimer = 1f / fireRate;
+        }
+
+        _fireRateTimer -= Time.deltaTime;
+    }
+
+    public void Shoot()
+    {
+        GameObject bulletInstance = Instantiate(bulletPrefab,firePoint.position, firePoint.rotation);
+        Bullets bullet = bulletInstance.GetComponent<Bullets>();
+
+        if (bullet!= null)
+        {
+            bullet.seek(target);
+            Debug.Log("Shoot");
+
+        }
     }
 
     private void OnDrawGizmosSelected()

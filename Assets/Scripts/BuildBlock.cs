@@ -12,7 +12,10 @@ public class BuildBlock : MonoBehaviour
 
     void Start()
     {
-        
+        if (walkable == true)
+        {
+            gameObject.isStatic = true;
+        }
     }
     
 }

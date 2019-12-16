@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class GridSpace : MonoBehaviour
 {
@@ -13,7 +16,7 @@ public class GridSpace : MonoBehaviour
         currentPos = this.transform.position;
     }
 
-    public void PlaceBlock(List<GameObject> prefabList,int buildBlockId , Vector3 position)
+    public void PlaceBlock(List<GameObject> prefabList,int buildBlockId , Vector3 position)//prefablist is always buildblock prefabs.
     {
         if (values.hasBuildBlock != true)
         {
@@ -26,7 +29,15 @@ public class GridSpace : MonoBehaviour
             buildBlockClass.gridSpacePair = GridManager.Instance.levelGrid[values.gridId].GetComponent<GridSpace>();
             buildBlock.GetComponent<BuildBlock>().pairId = values.gridId;
             buildBlock.GetComponent<BuildBlock>().buildBlockId = buildBlockId;
-            LevelBuildAndPlayManager.Instance.levelBlocks.Add(buildBlock); 
+            LevelBuildAndPlayManager.Instance.levelBlocks.Add(buildBlock);
+            buildBlock.GetComponent<NavMeshModifier>().area = 1;
+            buildBlock.GetComponent<NavMeshModifier>().overrideArea = true;
+            if (buildBlockId == 1)//soil block that is walkable
+            {
+                buildBlock.GetComponent<NavMeshModifier>().area = 0;
+                buildBlock.GetComponent<NavMeshModifier>().overrideArea = true;
+                LevelBuildAndPlayManager.Instance.walkableSurfaces.Add(buildBlock.GetComponent<NavMeshSurface>());
+            }
         }
     }
 
@@ -46,7 +57,7 @@ public class GridSpace : MonoBehaviour
         {
             values.hasMarker = true;
 
-            Vector3 offset = new Vector3(position.x, position.y + 1, position.z);
+            Vector3 offset = new Vector3(position.x, position.y + 3 , position.z);
             GameObject instance = Instantiate(marker, offset, Quaternion.identity);  
             LevelBuildAndPlayManager.Instance.monsterPath.Add(values.gridId);
             LevelBuildAndPlayManager.Instance.monsterPathPos.Add(instance);

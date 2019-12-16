@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 3700369086246409002}
   - component: {fileID: 306013025388141021}
   - component: {fileID: 5407834071943213735}
-  m_Layer: 0
+  - component: {fileID: 7371361582607561246}
+  m_Layer: 14
   m_Name: Monster test
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -106,5 +107,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 652a5526af917184a8e1a95c8364788c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  markerNumber: 0
   path: []
   currentMarker: {fileID: 0}
+  agent: {fileID: 0}
+--- !u!195 &7371361582607561246
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3936747447853304645}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.1
+  m_Speed: 2
+  m_Acceleration: 100
+  avoidancePriority: 50
+  m_AngularSpeed: 200
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 1
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4

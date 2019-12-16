@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Transactions;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -41,6 +42,7 @@ public class LevelBuildAndPlayManager : MonoBehaviour
     public List<GameObject> levelBlocks = new List<GameObject>();
     public List<GameObject> monsterPathPos = new List<GameObject>();
     public List<GameObject> monsterPrefabs = new List<GameObject>();
+    public List<NavMeshSurface> walkableSurfaces = new List<NavMeshSurface>();  
     
     //tools and prefabs
     public bool cameraRotating = false;
@@ -263,9 +265,13 @@ public class LevelBuildAndPlayManager : MonoBehaviour
                 for (int i = 0; i < monsterPath.Count; i++)
                 {
                     var markerPos = monsterPath[i];
-                    var gridSpace = GridManager.Instance.levelGrid[markerPos].GetComponent<GridSpace>();
+                    var gridSpaceObj = GridManager.Instance.levelGrid[markerPos];
+                    var gridSpace = gridSpaceObj.GetComponent<GridSpace>();
+
+                   
                     
-                    gridSpace.MonsterPathMarkerPlace(monsterPathMarker, gridSpace.transform.position);
+                        gridSpace.MonsterPathMarkerPlace(monsterPathMarker, gridSpace.transform.position);
+                        
                 }
                 // assign build area
                 for (int i = 0; i < buildArea.Count; i++)
@@ -350,11 +356,23 @@ public class LevelBuildAndPlayManager : MonoBehaviour
 
     IEnumerator StartMonsterWave()// later needs monster wave in parameters
     {
+        /*foreach (var marker in monsterPathPos)
+        {
+            marker.GetComponent<MeshRenderer>().enabled = false;
+        }*/
         foreach (var monster in monsterPrefabs)
         {
             Debug.Log("Monsters will spawn");
             yield return new WaitForSeconds(1);
-            Instantiate(monster, monsterPathPos[0].transform.position,monster.transform.rotation);
+            Ray ray  = new Ray();
+            
+            NavMeshHit hit;
+            Transform marker = monsterPathPos[0].transform;
+            Vector3 monsterSpawn = new Vector3(marker.transform.position.x,currentLayerId,marker.transform.position.z);
+            Instantiate(monster,monsterSpawn , monster.transform.rotation);
+
+            
+            
             yield return new WaitForSeconds(2);
         }
         Debug.Log("WAVE END");

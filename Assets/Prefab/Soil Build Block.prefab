@@ -13,9 +13,10 @@ GameObject:
   - component: {fileID: 9143213515770884870}
   - component: {fileID: -8773637558279853522}
   - component: {fileID: 4489871558992828463}
+  - component: {fileID: 6011669845963787332}
   m_Layer: 0
   m_Name: Soil Build Block
-  m_TagString: Untagged
+  m_TagString: Walkable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -108,4 +109,20 @@ MonoBehaviour:
   gridSpacePair: {fileID: 0}
   pairId: 0
   buildBlockId: 0
-  walkable: 0
+  walkable: 1
+--- !u!114 &6011669845963787332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7412905415635159002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OverrideArea: 0
+  m_Area: 0
+  m_IgnoreFromBuild: 0
+  m_AffectedAgents: ffffffff
