@@ -1,17 +1,45 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UserInterfaceManager : MonoBehaviour
 {
+    
+    
+    
     public static UserInterfaceManager Instance;
+    [Header("main ui elements")]
     public GameObject mainUi;
     public GameObject playUi;
+    public TextMeshProUGUI selectionText;
+    
+    [Header("pop up ui elements")]
     public GameObject cameraUiButtonsToggle;
+    
     // Categories
+    [Header("category toggle buttons")]
     public GameObject buildBlocksToggle;
     public GameObject decorationBlocksToggle;
     public GameObject specialBlocksToggle;
+
+    [Header("category toggle button lists")]
+
+    public List<GameObject> buildBlockButtons = new List<GameObject>();
+    public List<GameObject> decorationBlockButtons = new List<GameObject>();
+    public List<GameObject> specialBlockButtons = new List<GameObject>();
+
+    [Header("name identifier lists")] // this is stupid and i know their are better ways.
+    public List<string> categoryNames = new List<string>();
+    public List<string> buildBLockNames = new List<string>();
+    
+    [Header("misc")] 
+    public Color selectionColor;
+    public Color notSelectedColor;
+
+
+    public GameObject selectionBackground;
     // Start is called before the first frame update
     
     
@@ -31,6 +59,7 @@ public class UserInterfaceManager : MonoBehaviour
     {
         CatalogueReset();
         buildBlocksToggle.SetActive(true);
+        DefaultInterfaceState();
     }
 
     // Update is called once per frame
@@ -103,7 +132,16 @@ public class UserInterfaceManager : MonoBehaviour
 
     public void SelectBuildBlock(int prefabId)
     {
-        LevelBuildAndPlayManager.Instance.selectedBuildBlockId = prefabId;
+        int selectedBlockId = prefabId;
+
+        selectionBackground.GetComponent<Image>().color = notSelectedColor;
+        LevelBuildAndPlayManager.Instance.selectedBuildBlockId = selectedBlockId;
+        selectionBackground = buildBlockButtons[selectedBlockId];
+        selectionBackground.GetComponent<Image>().color = selectionColor;
+        UpdateSelectionText();
+
+
+        
         //LevelBuildAndPlayManager.Instance.selectedBuildBlock = LevelBuildAndPlayManager.Instance.buildBlocksPrefabs[prefabId];
     }
 
@@ -112,5 +150,41 @@ public class UserInterfaceManager : MonoBehaviour
         buildBlocksToggle.SetActive(false);
         decorationBlocksToggle.SetActive(false);
         specialBlocksToggle.SetActive(false);
+    }
+
+    public void UpdateSelectionText()
+    {
+        LevelBuildAndPlayManager.BuildBlockCategory category;
+        category = LevelBuildAndPlayManager.Instance.currentCategory;
+        string blockName = buildBLockNames[LevelBuildAndPlayManager.Instance.selectedBuildBlockId];
+        string categoryName = "no category";
+        if (category == LevelBuildAndPlayManager.BuildBlockCategory.BuildBLocks)
+        {
+            categoryName = categoryNames[0];
+        }
+
+        if (category == LevelBuildAndPlayManager.BuildBlockCategory.Decorations)
+        {
+            categoryName = categoryNames[1];
+        }
+
+        if (category == LevelBuildAndPlayManager.BuildBlockCategory.Special)
+        {
+            categoryName = categoryNames[2];
+        }
+        
+        selectionText.text = categoryName + blockName;
+    }
+
+    public void DefaultInterfaceState()
+    {
+        //default is grass block in build blocks if this is not the case check lists
+        int selectedBlockId = LevelBuildAndPlayManager.Instance.selectedBuildBlockId;
+        selectionBackground = buildBlockButtons[selectedBlockId];
+        selectionBackground.GetComponent<Image>().color = selectionColor;
+        //selectedBlock
+
+
+
     }
 }

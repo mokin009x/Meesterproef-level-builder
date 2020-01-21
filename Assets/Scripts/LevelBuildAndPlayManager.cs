@@ -38,13 +38,17 @@ public class LevelBuildAndPlayManager : MonoBehaviour
         Special
     }
 
+    public GameObject TestCube;
+    
     // current level
+    [Header("Data of level")]
     public List<GameObject> levelBlocks = new List<GameObject>();
     public List<GameObject> monsterPathPos = new List<GameObject>();
     public List<GameObject> monsterPrefabs = new List<GameObject>();
     public List<NavMeshSurface> walkableSurfaces = new List<NavMeshSurface>();  
     
     //tools and prefabs
+    [Header("Tools Related")]
     public bool cameraRotating = false;
     public Quaternion newCameraRotation;
     public Quaternion oldCameraRotation;
@@ -57,16 +61,23 @@ public class LevelBuildAndPlayManager : MonoBehaviour
     public BuildBlockCategory currentCategory;
     public ControlModes currentControlMode;
     public GameObject gridSpaceSelection = null;
-    public int currentLayerId = 5;
+    public int currentLayerId = 1;
     public int selectedBuildBlockId;
+
+    public GameObject gridSelectionVisual;
+    public float selectionAlpha = 0.75f;
+    public float saturateSpeed = 0.01f;
+    private bool _saturate = false;
+    
     
     //play Control mode
+    [Header("play mode with admin controls")]
     public List<GameObject> defenceTowers;
     public GameObject currentTower;
     
     private void Awake()
     {
-        currentLayerId = 5;
+        currentLayerId = 1;
         if (Instance != null && Instance != this)
         {   
             Destroy(this.gameObject);
@@ -79,10 +90,46 @@ public class LevelBuildAndPlayManager : MonoBehaviour
 
     void Start()
     {
+        selectedBuildBlockId = 0;// default it to grass block
         currentCategory = BuildBlockCategory.BuildBLocks;
         currentLayer = SwitchLayer(currentLayerId);
         currentTool = Tools.BuildBlockPlace;
         currentControlMode = ControlModes.BuildingLevel;
+    }
+
+    public void ColorUpdate()
+    {
+        if (_saturate == false)
+        {
+            if (selectionAlpha > 0f)
+            {
+                selectionAlpha = selectionAlpha - saturateSpeed;
+                var test = gridSelectionVisual.GetComponent<Renderer>().material.color;
+                Color newColor = new Color(test.r,test.g,test.b, selectionAlpha);
+
+                gridSelectionVisual.GetComponent<Renderer>().material.color = newColor;
+                return;
+            }
+
+            _saturate = true;
+        }
+
+        if (_saturate == true)
+        {
+            if (selectionAlpha < 0.75f)
+            {
+                selectionAlpha = selectionAlpha + saturateSpeed;
+                var test = gridSelectionVisual.GetComponent<Renderer>().material.color;
+                Color newColor = new Color(test.r,test.g,test.b, selectionAlpha);
+
+                gridSelectionVisual.GetComponent<Renderer>().material.color = newColor;
+                return;
+            }
+
+            _saturate = false;
+        }
+
+        
     }
 
     public LayerMask SwitchLayer(int layerId)
@@ -132,6 +179,20 @@ public class LevelBuildAndPlayManager : MonoBehaviour
     void Update()
     {
         Controls();
+        GridVisualUpdate();
+        
+    }
+
+    void GridVisualUpdate()
+    {
+        SelectSpace();
+        ColorUpdate();
+
+
+        if (gridSpaceSelection != null)
+        {
+            gridSelectionVisual.transform.position = gridSpaceSelection.transform.position;
+        }
     }
 
     void Controls()
@@ -394,7 +455,17 @@ public class LevelBuildAndPlayManager : MonoBehaviour
             {
                 gridSpaceSelection.GetComponent<GridSpace>().PlaceBlock(buildBlocksPrefabs,selectedBuildBlockId,gridSpaceSelection.transform.position);
             }
-            // do the other categorys
+
+            if (currentCategory == BuildBlockCategory.Decorations)
+            {
+                // to be implemented
+            }
+
+            if (currentCategory == BuildBlockCategory.Special)
+            {
+                // to be implemented
+            }
+            // do the other category
             
         }
 
@@ -420,10 +491,7 @@ public class LevelBuildAndPlayManager : MonoBehaviour
 
     void SelectSpace()
     {
-        if (EventSystem.current.IsPointerOverGameObject())
-        {
-            return;
-        }
+        
         
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
@@ -431,8 +499,11 @@ public class LevelBuildAndPlayManager : MonoBehaviour
         if (Physics.Raycast(ray, out hit, Mathf.Infinity,currentLayer))
         {
             Debug.Log("hit");
+            
             gridSpaceSelection = hit.collider.gameObject;
         }
+        
+        
     }
     
 
