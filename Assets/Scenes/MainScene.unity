@@ -146,7 +146,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7627782}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.5, y: 4, z: 4.5}
+  m_LocalPosition: {x: 4.5, y: 4, z: 3.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 525433221}
@@ -6734,7 +6734,7 @@ MonoBehaviour:
   levelBlocks: []
   monsterPathPos: []
   monsterPrefabs:
-  - {fileID: 3936747447853304645, guid: e853c224098d51e49ac82fbfe987ef08, type: 3}
+  - {fileID: 5193079315033904912, guid: e23fed2ec56db444a9910dafd23002d5, type: 3}
   walkableSurfaces: []
   cameraRotating: 0
   newCameraRotation: {x: 0, y: 0, z: 0, w: 0}
