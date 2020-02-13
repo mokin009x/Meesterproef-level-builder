@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Bullets : MonoBehaviour
 {
-    private Transform _target;
     private Vector3 _aimPoint;
+    private Transform _target;
+
     public float speed = 70f;
+
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
     }
 
@@ -21,33 +19,29 @@ public class Bullets : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (_target == null)
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
             return;
         }
-        
+
         Vector3 dir = _aimPoint - transform.position;
         float distanceThisFrame = speed * Time.deltaTime;
 
         if (dir.magnitude <= distanceThisFrame)
-        { 
-            HitTarget(); 
-            return; 
+        {
+            HitTarget();
+            return;
         }
-        
+
         transform.Translate(dir.normalized * distanceThisFrame, Space.World);
     }
 
     public void HitTarget()
     {
         Destroy(_target.gameObject);
-        Destroy(this.gameObject);
+        Destroy(gameObject);
     }
-
-
-
-
 }

@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BuildBlock : MonoBehaviour
 {
+    public int buildBlockId;
     public GridSpace gridSpacePair;
     public int pairId;
-    public int buildBlockId;
     public bool walkable;
 
-    void Start()
+    private void Start()
     {
-        if (walkable == true)
+        if (walkable)
         {
             gameObject.isStatic = true;
         }
     }
-    
 }

@@ -1,60 +1,59 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+
 public class GridManager : MonoBehaviour
 {
-    public static GridManager Instance;
     public enum LevelSizes
     {
         Small = 10,
         Medium = 15,
         Huge = 20
     }
-    public List<GameObject> levelGrid = new List<GameObject>();
+
+    public static GridManager Instance;
     public int gridSize;
+    public GameObject gridSpacePrefab;
+    public List<GameObject> levelGrid = new List<GameObject>();
+    public LevelSizes levelSize;
     public int xAxisGrid;
     public int yAxisGrid = 5;
     public int zAxisGrid;
-    public GameObject gridSpacePrefab;
-    public LevelSizes levelSize;
-    
-    
+
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
-        {   
-            Destroy(this.gameObject);
+        {
+            Destroy(gameObject);
         }
         else
         {
             Instance = this;
         }
     }
-    
-    
+
+
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         yAxisGrid = 5;
         levelSize = LevelSizes.Small;
         SizeCheck();
         xAxisGrid = gridSize;
         zAxisGrid = gridSize;
-        
-        
     }
+
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.K))
         {
             GenerateGrid();
-            LevelBuildAndPlayManager.Instance.ChangeGridVisibility();    
-           
+            LevelBuildAndPlayManager.Instance.ChangeGridVisibility();
         }
     }
-    void SizeCheck()
+
+    private void SizeCheck()
     {
         int size = 0;
         if (levelSize == LevelSizes.Small)
@@ -75,7 +74,7 @@ public class GridManager : MonoBehaviour
         gridSize = size;
     }
 
-    void GenerateGrid()
+    private void GenerateGrid()
     {
         int id = 0;
         for (int i = 0; i < yAxisGrid; i++)
@@ -85,7 +84,7 @@ public class GridManager : MonoBehaviour
                 for (int k = 0; k < xAxisGrid; k++)
                 {
                     GameObject newSpace = gridSpacePrefab;
-                    GameObject instance = Instantiate(newSpace,new Vector3(k,i,j),Quaternion.identity);
+                    GameObject instance = Instantiate(newSpace, new Vector3(k, i, j), Quaternion.identity);
                     int gridId = id;
                     instance.layer = 8 + i;
                     GridSpaceValues newSpaceValuesInstance = new GridSpaceValues(gridId);
@@ -117,6 +116,4 @@ public class GridManager : MonoBehaviour
 
         return size;
     }
-
-
 }

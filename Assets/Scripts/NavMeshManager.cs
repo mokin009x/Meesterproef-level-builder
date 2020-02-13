@@ -1,33 +1,31 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 public class NavMeshManager : MonoBehaviour
 {
-
-    [SerializeField] NavMeshSurface navMeshSurface;
-
     public static NavMeshManager Instance;
+
+    [SerializeField] private NavMeshSurface navMeshSurface;
+
     // Start is called before the first frame update
     private void Awake()
     {
         if (Instance != null && Instance != this)
-        {   
-            Destroy(this.gameObject);
+        {
+            Destroy(gameObject);
         }
         else
         {
             Instance = this;
         }
     }
-    void Start()
+
+    private void Start()
     {
-        
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.G))
         {

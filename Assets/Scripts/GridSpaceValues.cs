@@ -1,52 +1,44 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class GridSpaceValues
+﻿public class GridSpaceValues
 {
+    public bool buildArea;
     public int gridId;
     public bool hasBuildBlock;
+    public bool hasSpecial;
     public bool hasMarker;
-    public bool buildArea;
     public bool hasTower;
-    
+
     public GridSpaceValues()
     {
         Defaults();
     }
 
-    public GridSpaceValues( int gridId)
+    public GridSpaceValues(int gridId)
     {
         this.gridId = gridId;
         Defaults();
     }
 
-    void Awake()
+    private void Awake()
     {
         Defaults();
     }
 
-    void Defaults()
+    private void Defaults()
     {
-        
         hasBuildBlock = false;
         hasMarker = false;
         buildArea = false;
         hasTower = false;
-
     }
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
     }
-    
+
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
     }
 }

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - Walkable
+  - Tool Tip Button
   layers:
   - Default
   - TransparentFX

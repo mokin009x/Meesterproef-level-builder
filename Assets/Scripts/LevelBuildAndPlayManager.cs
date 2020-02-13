@@ -1,28 +1,26 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Transactions;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class LevelBuildAndPlayManager : MonoBehaviour
 {
-    public static LevelBuildAndPlayManager Instance;
-    // lists for saving
-    public List<int> levelBLocksIds = new List<int>();
-    public List<int> gridIds = new List<int>();
-    public List<int> monsterPath = new List<int>();
-    public List<int> buildArea = new List<int>();
-    //
-    public LayerMask currentLayer;
+    public enum BuildBlockCategory
+    {
+        BuildBLocks,
+        Decorations,
+        Special
+    }
 
     public enum ControlModes
     {
         BuildingLevel,
         PlayingLevel
     }
+
     public enum Tools
     {
         None,
@@ -31,56 +29,87 @@ public class LevelBuildAndPlayManager : MonoBehaviour
         BuildAreaAssign
     }
     
-    public enum BuildBlockCategory
+    public enum PlaceDirection
     {
-        BuildBLocks,
-        Decorations,
-        Special
+       North = 0, 
+       East = 1,
+       South = 2,
+       West = 3
     }
 
-    public GameObject TestCube;
-    
-    // current level
-    [Header("Data of level")]
-    public List<GameObject> levelBlocks = new List<GameObject>();
-    public List<GameObject> monsterPathPos = new List<GameObject>();
-    public List<GameObject> monsterPrefabs = new List<GameObject>();
-    public List<NavMeshSurface> walkableSurfaces = new List<NavMeshSurface>();  
-    
-    //tools and prefabs
-    [Header("Tools Related")]
-    public bool cameraRotating = false;
-    public Quaternion newCameraRotation;
-    public Quaternion oldCameraRotation;
-    public float cameraSpeed = 0.5f;
-    public GameObject cameraMarker;
-    public GameObject monsterPathMarker;
+    public static LevelBuildAndPlayManager Instance;
+    private bool _saturate;
+    public List<int> buildArea = new List<int>();
     public GameObject buildAreaMarker;
     public List<GameObject> buildBlocksPrefabs = new List<GameObject>();
-    public Tools currentTool;
-    public BuildBlockCategory currentCategory;
-    public ControlModes currentControlMode;
-    public GameObject gridSpaceSelection = null;
-    public int currentLayerId = 1;
-    public int selectedBuildBlockId;
+    public List<GameObject> specialBlocksPrefabs = new List<GameObject>();
+    public GameObject cameraMarker;
 
-    public GameObject gridSelectionVisual;
-    public float selectionAlpha = 0.75f;
-    public float saturateSpeed = 0.01f;
-    private bool _saturate = false;
-    
-    
+    //tools and prefabs
+    [Header("Tools Related")] 
+    public bool cameraRotating;
+
+    public float cameraSpeed = 0.5f;
+    public BuildBlockCategory currentCategory;
+
+    public ControlModes currentControlMode;
+
+    //
+    public LayerMask currentLayer;
+    public int currentLayerId = 1;
+    public Tools currentTool;
+    public GameObject currentTower;
+    public bool teleporterPair = false;
+    public GameObject pairTeleporterObj;
+    public PlaceDirection visualDirection;
+    public Vector3 visualRotation;
+
     //play Control mode
     [Header("play mode with admin controls")]
     public List<GameObject> defenceTowers;
-    public GameObject currentTower;
+
+    public List<int> blockGridIds = new List<int>();
+
+    public GameObject gridSelectionVisual;
+
+    // current level
+    [Header("Data of level")] 
+    public List<GameObject> levelBlocks = new List<GameObject>();
+    public List<GameObject> specialBlocks = new List<GameObject>();
+
+    // lists for saving
+    public List<int> levelBLocksIds = new List<int>();
+    //public List<Vector3> levelBlockRotation = new List<Vector3>();
+    public List<float> blockRotationX;
+    public List<float> blockRotationY;
+    public List<float> blockRotationZ;
+
+    public List<float> specialRotationX;
+    public List<float> specialRotationY;
+    public List<float> specialRotationZ;
     
+    public List<int> monsterPath = new List<int>();
+    public GameObject monsterPathMarker;
+    public List<GameObject> monsterPathPos = new List<GameObject>();
+    public List<GameObject> monsterPrefabs = new List<GameObject>();
+    //public Quaternion newCameraRotation;
+    //public Quaternion oldCameraRotation;
+    public float saturateSpeed = 0.01f;
+    public int selectedBuildBlockId;
+    public int selectedSpecialBlockId;
+    public float selectionAlpha = 0.75f;
+    public GameObject selectionGameObj;
+
+    public GameObject TestCube;
+    public List<NavMeshSurface> walkableSurfaces = new List<NavMeshSurface>();
+
     private void Awake()
     {
+        visualDirection = PlaceDirection.South;
         currentLayerId = 1;
         if (Instance != null && Instance != this)
-        {   
-            Destroy(this.gameObject);
+        {
+            Destroy(gameObject);
         }
         else
         {
@@ -88,9 +117,9 @@ public class LevelBuildAndPlayManager : MonoBehaviour
         }
     }
 
-    void Start()
+    private void Start()
     {
-        selectedBuildBlockId = 0;// default it to grass block
+        selectedBuildBlockId = 0; // default it to grass block
         currentCategory = BuildBlockCategory.BuildBLocks;
         currentLayer = SwitchLayer(currentLayerId);
         currentTool = Tools.BuildBlockPlace;
@@ -105,7 +134,7 @@ public class LevelBuildAndPlayManager : MonoBehaviour
             {
                 selectionAlpha = selectionAlpha - saturateSpeed;
                 var test = gridSelectionVisual.GetComponent<Renderer>().material.color;
-                Color newColor = new Color(test.r,test.g,test.b, selectionAlpha);
+                var newColor = new Color(test.r, test.g, test.b, selectionAlpha);
 
                 gridSelectionVisual.GetComponent<Renderer>().material.color = newColor;
                 return;
@@ -114,13 +143,13 @@ public class LevelBuildAndPlayManager : MonoBehaviour
             _saturate = true;
         }
 
-        if (_saturate == true)
+        if (_saturate)
         {
             if (selectionAlpha < 0.75f)
             {
                 selectionAlpha = selectionAlpha + saturateSpeed;
                 var test = gridSelectionVisual.GetComponent<Renderer>().material.color;
-                Color newColor = new Color(test.r,test.g,test.b, selectionAlpha);
+                var newColor = new Color(test.r, test.g, test.b, selectionAlpha);
 
                 gridSelectionVisual.GetComponent<Renderer>().material.color = newColor;
                 return;
@@ -128,34 +157,32 @@ public class LevelBuildAndPlayManager : MonoBehaviour
 
             _saturate = false;
         }
-
-        
     }
 
     public LayerMask SwitchLayer(int layerId)
     {
-        LayerMask newLayer = new LayerMask();
-        
+        var newLayer = new LayerMask();
+
         if (layerId == 1)
         {
             newLayer = LayerMask.GetMask("Build layer 1");
         }
-        
+
         if (layerId == 2)
         {
             newLayer = LayerMask.GetMask("Build layer 2");
         }
-        
+
         if (layerId == 3)
         {
             newLayer = LayerMask.GetMask("Build layer 3");
         }
-        
+
         if (layerId == 4)
         {
             newLayer = LayerMask.GetMask("Build layer 4");
         }
-        
+
         if (layerId == 5)
         {
             newLayer = LayerMask.GetMask("Build layer 5");
@@ -167,6 +194,10 @@ public class LevelBuildAndPlayManager : MonoBehaviour
     public void ChangeTool(Tools tool)
     {
         currentTool = tool;
+        if (teleporterPair == true)
+        {
+            pairTeleporterObj.GetComponent<Teleporter>().Cancel();
+        }
     }
 
     public void ChangeMode(ControlModes mode)
@@ -176,26 +207,49 @@ public class LevelBuildAndPlayManager : MonoBehaviour
 
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         Controls();
-        GridVisualUpdate();
-        
+        GridVisualPositionUpdate();
     }
 
-    void GridVisualUpdate()
+    private void GridVisualPositionUpdate()
     {
         SelectSpace();
         ColorUpdate();
 
 
-        if (gridSpaceSelection != null)
+        if (selectionGameObj != null)
         {
-            gridSelectionVisual.transform.position = gridSpaceSelection.transform.position;
+            gridSelectionVisual.transform.position = selectionGameObj.transform.position;
+            gridSelectionVisual.transform.eulerAngles = visualRotation;
         }
     }
+    public void GridVisualRotationUpdate()
+    {
+        if (visualDirection == PlaceDirection.North)
+        {
+            visualRotation = new Vector3(0, 180, 0);
+        }
 
-    void Controls()
+        if (visualDirection == PlaceDirection.East)
+        {
+            visualRotation = new Vector3(0, 270, 0);
+        }
+
+        if (visualDirection == PlaceDirection.South)
+        {
+            visualRotation = new Vector3(0, 0, 0);
+        }
+
+        if (visualDirection == PlaceDirection.West)
+        {
+            visualRotation = new Vector3(0, 90, 0);
+        }
+        
+    }
+
+    private void Controls()
     {
         if (currentControlMode == ControlModes.BuildingLevel)
         {
@@ -215,7 +269,7 @@ public class LevelBuildAndPlayManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Mouse1))
             {
                 SelectSpace();
-                gridSpaceSelection.GetComponent<GridSpace>().RemoveBlock();
+                selectionGameObj.GetComponent<GridSpace>().RemoveBlock();
             }
 
             if (Input.GetKeyDown(KeyCode.Backspace))
@@ -277,6 +331,38 @@ public class LevelBuildAndPlayManager : MonoBehaviour
                 RotateCamera("Counter Clockwise");
             }
 
+            if (Input.GetKeyDown(KeyCode.Period))
+            {
+                int directionId = (int) visualDirection;
+                if (directionId != 0)
+                {
+                    directionId = directionId - 1;
+                }
+                else
+                {
+                    directionId = 3;
+                }
+                visualDirection = (PlaceDirection)directionId;
+                GridVisualRotationUpdate();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Comma))
+            {
+                int directionId = (int) visualDirection;
+                if (directionId != 3)
+                {
+                    directionId = directionId + 1;
+                }
+                else
+                {
+                    directionId = 0;
+                }
+                
+                visualDirection = (PlaceDirection)directionId;
+                GridVisualRotationUpdate();
+            }
+            
+
             if (Input.GetKeyDown(KeyCode.M)) // switch mode
             {
                 Debug.Log("press m");
@@ -292,12 +378,12 @@ public class LevelBuildAndPlayManager : MonoBehaviour
             {
                 foreach (var levelBlock in levelBlocks)
                 {
-                    BuildBlock instance = levelBlock.GetComponent<BuildBlock>();
+                    var instance = levelBlock.GetComponent<BuildBlock>();
                     var blockId = instance.buildBlockId;
                     var gridId = instance.pairId;
 
                     levelBLocksIds.Add(blockId);
-                    gridIds.Add(gridId);
+                    blockGridIds.Add(gridId);
                 }
 
                 SaveLoad.Save();
@@ -314,37 +400,44 @@ public class LevelBuildAndPlayManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 // placing building blocks
-                for (int i = 0; i < levelBLocksIds.Count; i++)
+                for (var i = 0; i < levelBLocksIds.Count; i++)
                 {
                     var blockId = levelBLocksIds[i];
-                    var gridId = gridIds[i];
+                    var gridId = blockGridIds[i];
                     var gridSpace = GridManager.Instance.levelGrid[gridId].GetComponent<GridSpace>();
-                    gridSpace.PlaceBlock(buildBlocksPrefabs,blockId, gridSpace.currentPos);
+                    gridSpace.PlaceBlock(buildBlocksPrefabs, blockId, gridSpace.currentPos);
                     // still need to give states to the blocks after loading level
                 }
+
+                // change rotation of blocks.
+                for (int i = 0; i < levelBLocksIds.Count -1; i++)
+                {
+                    
+                    Vector3 newRotation = new Vector3(blockRotationX[i],blockRotationY[i],blockRotationZ[i]);
+                    
+                    levelBlocks[i].transform.rotation = Quaternion.Euler(newRotation);
+                }
+
                 // place monster path
-                for (int i = 0; i < monsterPath.Count; i++)
+                for (var i = 0; i < monsterPath.Count; i++)
                 {
                     var markerPos = monsterPath[i];
                     var gridSpaceObj = GridManager.Instance.levelGrid[markerPos];
                     var gridSpace = gridSpaceObj.GetComponent<GridSpace>();
 
-                   
-                    
-                        gridSpace.MonsterPathMarkerPlace(monsterPathMarker, gridSpace.transform.position);
-                        
+
+                    gridSpace.MonsterPathMarkerPlace(monsterPathMarker, gridSpace.transform.position);
                 }
+
                 // assign build area
-                for (int i = 0; i < buildArea.Count; i++)
+                for (var i = 0; i < buildArea.Count; i++)
                 {
                     var buildAreaPos = buildArea[i];
                     var gridSpace = GridManager.Instance.levelGrid[buildAreaPos].GetComponent<GridSpace>();
 
                     gridSpace.values.buildArea = true;
                     Debug.Log(gridSpace.values.buildArea);
-
                 }
-                
             }
             //camera and layers
 
@@ -389,33 +482,32 @@ public class LevelBuildAndPlayManager : MonoBehaviour
             {
                 StartCoroutine(StartMonsterWave());
             }
-            
+
             if (Input.GetKeyDown(KeyCode.M)) // switch mode
             {
                 UserInterfaceManager.Instance.playUi.SetActive(false);
                 UserInterfaceManager.Instance.mainUi.SetActive(true);
                 ChangeMode(ControlModes.BuildingLevel);
-                return; // insurance if i write more code under this. 
             }
         }
-        
     }
 
     //playMode methods 
     public void PlaceTower(GameObject tower)
     {
         SelectSpace();
-        var space = gridSpaceSelection.GetComponent<GridSpace>().values;
-        
-        if (space.hasTower != true && space.buildArea == true)
+        var space = selectionGameObj.GetComponent<GridSpace>().values;
+
+        if (space.hasTower != true && space.buildArea)
         {
-            Vector3 spawnOffset = gridSpaceSelection.transform.position + new Vector3(0,0.5f,0);
-            Instantiate(tower, spawnOffset, tower.transform.rotation);
+            var spawnTransform = selectionGameObj.transform;
+            var spawnOffset = spawnTransform.position + new Vector3(0, 0.5f, 0);
+            Instantiate(tower, spawnOffset, Quaternion.Euler(visualRotation));
             space.hasTower = true;
         }
     }
 
-    IEnumerator StartMonsterWave()// later needs monster wave in parameters
+    private IEnumerator StartMonsterWave() // later needs monster wave in parameters
     {
         /*foreach (var marker in monsterPathPos)
         {
@@ -425,27 +517,26 @@ public class LevelBuildAndPlayManager : MonoBehaviour
         {
             Debug.Log("Monsters will spawn");
             yield return new WaitForSeconds(1);
-            Ray ray  = new Ray();
-            
-            NavMeshHit hit;
-            Transform marker = monsterPathPos[0].transform;
-            Vector3 monsterSpawn = new Vector3(marker.transform.position.x,currentLayerId,marker.transform.position.z);
-            Instantiate(monster,monsterSpawn , monster.transform.rotation);
+            var ray = new Ray();
 
-            
-            
+            var marker = monsterPathPos[0].transform;
+            var monsterSpawn = new Vector3(marker.transform.position.x, currentLayerId, marker.transform.position.z);
+            Instantiate(monster, monsterSpawn, monster.transform.rotation);
+
+
             yield return new WaitForSeconds(2);
         }
+
         Debug.Log("WAVE END");
     }
     //
 
-    public void SelectTower(int towerId)
+    /*public void SelectTower(int towerId)
     {
         currentTower = defenceTowers[towerId];
-    }
+    }*/
 
-    void ToolEffects()
+    private void ToolEffects()
     {
         if (currentTool == Tools.BuildBlockPlace)
         {
@@ -453,7 +544,8 @@ public class LevelBuildAndPlayManager : MonoBehaviour
             // place block
             if (currentCategory == BuildBlockCategory.BuildBLocks)
             {
-                gridSpaceSelection.GetComponent<GridSpace>().PlaceBlock(buildBlocksPrefabs,selectedBuildBlockId,gridSpaceSelection.transform.position);
+                
+                selectionGameObj.GetComponent<GridSpace>().PlaceBlock(buildBlocksPrefabs, selectedBuildBlockId, selectionGameObj.transform.position);
             }
 
             if (currentCategory == BuildBlockCategory.Decorations)
@@ -463,101 +555,96 @@ public class LevelBuildAndPlayManager : MonoBehaviour
 
             if (currentCategory == BuildBlockCategory.Special)
             {
-                // to be implemented
+                selectionGameObj.GetComponent<GridSpace>().PlaceSpecial(specialBlocks,selectedSpecialBlockId,selectionGameObj.transform.position);
             }
+
             // do the other category
-            
         }
 
         if (currentTool == Tools.MonsterPathCreate)
         {
             SelectSpace();
-            gridSpaceSelection.GetComponent<GridSpace>().MonsterPathMarkerPlace(monsterPathMarker,gridSpaceSelection.transform.position);
+            selectionGameObj.GetComponent<GridSpace>().MonsterPathMarkerPlace(monsterPathMarker, selectionGameObj.transform.position);
         }
 
         if (currentTool == Tools.BuildAreaAssign)
-        { 
+        {
             SelectSpace();
-            gridSpaceSelection.GetComponent<GridSpace>().BuildAreaAssign(buildAreaMarker);
-
+            selectionGameObj.GetComponent<GridSpace>().BuildAreaAssign(buildAreaMarker);
         }
     }
 
-    void RemovePath()
+    private void RemovePath()
     {
         // Still needs to reverse the placed marker values on the spaces.
         monsterPath.RemoveAt(monsterPath.Count - 1);
     }
 
-    void SelectSpace()
+    private void SelectSpace()
     {
-        
-        
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity,currentLayer))
+
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, currentLayer))
         {
-            Debug.Log("hit");
-            
-            gridSpaceSelection = hit.collider.gameObject;
+            // Debug.Log("hit");
+
+            selectionGameObj = hit.collider.gameObject;
         }
-        
-        
     }
-    
+
 
     public void MoveCamera(string direction)
     {
-        Vector3 forward = cameraMarker.transform.forward * cameraSpeed; ;
-        Vector3 left = -cameraMarker.transform.right * cameraSpeed;;
-        Vector3 backwards = -cameraMarker.transform.forward * cameraSpeed;;        
-        Vector3 right = cameraMarker.transform.right * cameraSpeed;;
+        var forward = cameraMarker.transform.forward * cameraSpeed;
+        var left = -cameraMarker.transform.right * cameraSpeed;
+        var backwards = -cameraMarker.transform.forward * cameraSpeed;
+        var right = cameraMarker.transform.right * cameraSpeed;
 
-        
-        Vector3 moveDirection = new Vector3();
-        
+
+        var moveDirection = new Vector3();
+
         if (direction == "Forwards")
         {
-            moveDirection =  forward;
+            moveDirection = forward;
         }
-        
+
         if (direction == "Left")
         {
-            moveDirection =  left;
+            moveDirection = left;
         }
-        
+
         if (direction == "Backwards")
         {
-            moveDirection =   backwards;
+            moveDirection = backwards;
         }
-        
+
         if (direction == "Right")
         {
-            moveDirection =  right;
+            moveDirection = right;
         }
-        
+
         if (direction == "Left and Forwards")
         {
-            moveDirection =  left + forward;
+            moveDirection = left + forward;
         }
-        
+
         if (direction == "Right and Forwards")
         {
-            moveDirection =  right + forward;
-        } 
-        
+            moveDirection = right + forward;
+        }
+
         if (direction == "Right and Backwards")
         {
-            moveDirection =  right + backwards;
+            moveDirection = right + backwards;
         }
-        
+
         if (direction == "left and Backwards")
         {
-            moveDirection =  left + backwards;
+            moveDirection = left + backwards;
         }
-        
-        
+
+
         cameraMarker.GetComponent<Rigidbody>().velocity = moveDirection;
     }
 
@@ -571,7 +658,7 @@ public class LevelBuildAndPlayManager : MonoBehaviour
                 StartCoroutine(RotateCam(Vector3.up * 90, 0.8f));
             }
         }
-        
+
         if (direction == "Counter Clockwise")
         {
             if (cameraRotating == false)
@@ -586,18 +673,33 @@ public class LevelBuildAndPlayManager : MonoBehaviour
     {
         foreach (var levelBlock in levelBlocks)
         {
-            BuildBlock instance = levelBlock.GetComponent<BuildBlock>();
+            var instance = levelBlock.GetComponent<BuildBlock>();
             var blockId = instance.buildBlockId;
             var gridId = instance.pairId;
-                
+
             levelBLocksIds.Add(blockId);
-            gridIds.Add(gridId);
+            blockGridIds.Add(gridId);
         }
+
         SaveLoad.Save();
     }
 
+    public void EnterPlayMode() // button
+    {
+        UserInterfaceManager.Instance.mainUi.SetActive(false);
+        UserInterfaceManager.Instance.playUi.SetActive(true);
+        ChangeMode(ControlModes.PlayingLevel);
+    }
 
-    IEnumerator RotateCam(Vector3 byAngles, float inTime)
+    public void EnterBuildMode()
+    {
+        UserInterfaceManager.Instance.mainUi.SetActive(true);
+        UserInterfaceManager.Instance.playUi.SetActive(false);
+        ChangeMode(ControlModes.BuildingLevel);
+    }
+
+
+    private IEnumerator RotateCam(Vector3 byAngles, float inTime)
     {
         var fromAngle = cameraMarker.transform.rotation;
         var toAngle = Quaternion.Euler(cameraMarker.transform.eulerAngles + byAngles);
@@ -615,8 +717,7 @@ public class LevelBuildAndPlayManager : MonoBehaviour
     {
         foreach (var space in GridManager.Instance.levelGrid)
         {
-
-            if ((currentLayer & 1 << space.gameObject.layer) != 1 << space.gameObject.layer)
+            if ((currentLayer & (1 << space.gameObject.layer)) != 1 << space.gameObject.layer)
             {
                 space.GetComponent<MeshRenderer>().enabled = false;
                 space.GetComponent<BoxCollider>().enabled = false;
@@ -626,8 +727,6 @@ public class LevelBuildAndPlayManager : MonoBehaviour
                 space.GetComponent<MeshRenderer>().enabled = true;
                 space.GetComponent<BoxCollider>().enabled = true;
             }
-
         }
     }
 }
-
