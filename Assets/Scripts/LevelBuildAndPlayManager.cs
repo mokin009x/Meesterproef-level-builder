@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
 
 public class LevelBuildAndPlayManager : MonoBehaviour
 {
     public enum BuildBlockCategory
     {
-        BuildBLocks,
+        BuildBlocks,
         Decorations,
         Special
     }
@@ -21,6 +19,14 @@ public class LevelBuildAndPlayManager : MonoBehaviour
         PlayingLevel
     }
 
+    public enum PlaceDirection
+    {
+        North = 0,
+        East = 1,
+        South = 2,
+        West = 3
+    }
+
     public enum Tools
     {
         None,
@@ -28,23 +34,17 @@ public class LevelBuildAndPlayManager : MonoBehaviour
         MonsterPathCreate,
         BuildAreaAssign
     }
-    
-    public enum PlaceDirection
-    {
-       North = 0, 
-       East = 1,
-       South = 2,
-       West = 3
-    }
 
     public static LevelBuildAndPlayManager Instance;
     private bool _saturate;
-    public List<int> buildArea = new List<int>();
-    public GameObject buildAreaMarker;
+    
+    [Header("prefabs and prefab lists")]
     public List<GameObject> buildBlocksPrefabs = new List<GameObject>();
     public List<GameObject> specialBlocksPrefabs = new List<GameObject>();
+    public GameObject buildAreaMarker;
     public GameObject cameraMarker;
-
+    
+    
     //tools and prefabs
     [Header("Tools Related")] 
     public bool cameraRotating;
@@ -59,50 +59,74 @@ public class LevelBuildAndPlayManager : MonoBehaviour
     public int currentLayerId = 1;
     public Tools currentTool;
     public GameObject currentTower;
-    public bool teleporterPair = false;
-    public GameObject pairTeleporterObj;
-    public PlaceDirection visualDirection;
-    public Vector3 visualRotation;
 
     //play Control mode
     [Header("play mode with admin controls")]
     public List<GameObject> defenceTowers;
-
-    public List<int> blockGridIds = new List<int>();
-
     public GameObject gridSelectionVisual;
-
-    // current level
-    [Header("Data of level")] 
-    public List<GameObject> levelBlocks = new List<GameObject>();
-    public List<GameObject> specialBlocks = new List<GameObject>();
-
-    // lists for saving
-    public List<int> levelBLocksIds = new List<int>();
-    //public List<Vector3> levelBlockRotation = new List<Vector3>();
-    public List<float> blockRotationX;
-    public List<float> blockRotationY;
-    public List<float> blockRotationZ;
-
-    public List<float> specialRotationX;
-    public List<float> specialRotationY;
-    public List<float> specialRotationZ;
     
-    public List<int> monsterPath = new List<int>();
+    // current level
+    [Header("Data of level")]
+    //build blocks
+    public List<int> levelBlocksIds = new List<int>();
+    public List<GameObject> levelBlocks = new List<GameObject>();
+    public List<float> levelBlockRotationX = new List<float>();
+    public List<float> levelBlockRotationY = new List<float>();
+    public List<float> levelBlockRotationZ = new List<float>();
+    
+    //special blocks
+    public List<GameObject> specialBlocks = new List<GameObject>();
+    public List<int> specialBlockIds = new List<int>();
+    public List<float> levelSpecialRotationX = new List<float>();
+    public List<float> levelSpecialRotationY = new List<float>();
+    public List<float> levelSpecialRotationZ = new List<float>();
+
+    // monster path
+    public List<int> levelMonsterPathPosId = new List<int>();
+
+    //build area
+    public List<int> buildArea = new List<int>();
+    
+    [Header("Lists for saving")]//----------------------------------------------------------------//
+    
+    // build blocks
+    public List<int> buildBlockGridIds = new List<int>();
+    public List<float> blockRotationX = new List<float>();
+    public List<float> blockRotationY = new List<float>();
+    public List<float> blockRotationZ = new List<float>();
+
+    //special blocks
+   
+    public List<int> specialGridId = new List<int>();
+    public List<float> specialRotationX = new List<float>();
+    public List<float> specialRotationY = new List<float>();
+    public List<float> specialRotationZ = new List<float>();
+    
+    
+    //monster path
+    public List<GameObject> levelMonsterPathObjList = new List<GameObject>();
+
     public GameObject monsterPathMarker;
-    public List<GameObject> monsterPathPos = new List<GameObject>();
+    public List<int> monsterPathPosId = new List<int>(); // position id
     public List<GameObject> monsterPrefabs = new List<GameObject>();
-    //public Quaternion newCameraRotation;
-    //public Quaternion oldCameraRotation;
-    public float saturateSpeed = 0.01f;
+    
+    //teleporter exclusive
+    public bool teleporterPair;//pairing mode
+    
+    public GameObject pairTeleporterObj1;//pair object 1
+    public GameObject pairTeleporterObj2;//pair object 2
+    
+    public GameObject selectionGameObj;
+    
+
+    [Header("misc")]
+    public PlaceDirection visualDirection;
+    public Vector3 visualRotation;
     public int selectedBuildBlockId;
     public int selectedSpecialBlockId;
     public float selectionAlpha = 0.75f;
-    public GameObject selectionGameObj;
-
-    public GameObject TestCube;
-    public List<NavMeshSurface> walkableSurfaces = new List<NavMeshSurface>();
-
+    public float saturateSpeed = 0.01f;
+    
     private void Awake()
     {
         visualDirection = PlaceDirection.South;
@@ -120,7 +144,7 @@ public class LevelBuildAndPlayManager : MonoBehaviour
     private void Start()
     {
         selectedBuildBlockId = 0; // default it to grass block
-        currentCategory = BuildBlockCategory.BuildBLocks;
+        currentCategory = BuildBlockCategory.BuildBlocks;
         currentLayer = SwitchLayer(currentLayerId);
         currentTool = Tools.BuildBlockPlace;
         currentControlMode = ControlModes.BuildingLevel;
@@ -194,9 +218,9 @@ public class LevelBuildAndPlayManager : MonoBehaviour
     public void ChangeTool(Tools tool)
     {
         currentTool = tool;
-        if (teleporterPair == true)
+        if (teleporterPair)
         {
-            pairTeleporterObj.GetComponent<Teleporter>().Cancel();
+            pairTeleporterObj1.GetComponent<Teleporter>().Cancel();
         }
     }
 
@@ -225,6 +249,7 @@ public class LevelBuildAndPlayManager : MonoBehaviour
             gridSelectionVisual.transform.eulerAngles = visualRotation;
         }
     }
+
     public void GridVisualRotationUpdate()
     {
         if (visualDirection == PlaceDirection.North)
@@ -246,7 +271,6 @@ public class LevelBuildAndPlayManager : MonoBehaviour
         {
             visualRotation = new Vector3(0, 90, 0);
         }
-        
     }
 
     private void Controls()
@@ -269,6 +293,8 @@ public class LevelBuildAndPlayManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Mouse1))
             {
                 SelectSpace();
+
+                //checks and removes special blocks first
                 selectionGameObj.GetComponent<GridSpace>().RemoveBlock();
             }
 
@@ -342,7 +368,8 @@ public class LevelBuildAndPlayManager : MonoBehaviour
                 {
                     directionId = 3;
                 }
-                visualDirection = (PlaceDirection)directionId;
+
+                visualDirection = (PlaceDirection) directionId;
                 GridVisualRotationUpdate();
             }
 
@@ -357,11 +384,11 @@ public class LevelBuildAndPlayManager : MonoBehaviour
                 {
                     directionId = 0;
                 }
-                
-                visualDirection = (PlaceDirection)directionId;
+
+                visualDirection = (PlaceDirection) directionId;
                 GridVisualRotationUpdate();
             }
-            
+
 
             if (Input.GetKeyDown(KeyCode.M)) // switch mode
             {
@@ -372,21 +399,10 @@ public class LevelBuildAndPlayManager : MonoBehaviour
                 return;
             }
 
-
             // save level( to be put in a method for button later)
             if (Input.GetKeyDown(KeyCode.P))
             {
-                foreach (var levelBlock in levelBlocks)
-                {
-                    var instance = levelBlock.GetComponent<BuildBlock>();
-                    var blockId = instance.buildBlockId;
-                    var gridId = instance.pairId;
-
-                    levelBLocksIds.Add(blockId);
-                    blockGridIds.Add(gridId);
-                }
-
-                SaveLoad.Save();
+                SaveLevel();
             }
 
             // load level( to be put in a method for button later)
@@ -397,31 +413,53 @@ public class LevelBuildAndPlayManager : MonoBehaviour
             }
 
             //if level is loaded this will reconstruct the level
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(
+                KeyCode.Space))
             {
                 // placing building blocks
-                for (var i = 0; i < levelBLocksIds.Count; i++)
+                for (var i = 0; i < levelBlocksIds.Count; i++)
                 {
-                    var blockId = levelBLocksIds[i];
-                    var gridId = blockGridIds[i];
+                    var blockId = levelBlocksIds[i];
+                    var gridId = buildBlockGridIds[i];
                     var gridSpace = GridManager.Instance.levelGrid[gridId].GetComponent<GridSpace>();
-                    gridSpace.PlaceBlock(buildBlocksPrefabs, blockId, gridSpace.currentPos);
+                    gridSpace.PlaceBlock(buildBlocksPrefabs, blockId, gridSpace.currentPos, false);
                     // still need to give states to the blocks after loading level
                 }
 
-                // change rotation of blocks.
-                for (int i = 0; i < levelBLocksIds.Count -1; i++)
+                // change rotation of build blocks.
+                for (int i = 0; i < levelBlocksIds.Count; i++)
                 {
-                    
-                    Vector3 newRotation = new Vector3(blockRotationX[i],blockRotationY[i],blockRotationZ[i]);
-                    
+                    Vector3 newRotation = new Vector3(blockRotationX[i], blockRotationY[i], blockRotationZ[i]);
+
                     levelBlocks[i].transform.rotation = Quaternion.Euler(newRotation);
                 }
 
-                // place monster path
-                for (var i = 0; i < monsterPath.Count; i++)
+                // placing special blocks
+                for (int i = 0; i < specialBlockIds.Count; i++)
                 {
-                    var markerPos = monsterPath[i];
+                    Debug.Log(specialBlockIds[i] + " blockIds");
+                    Debug.Log(specialGridId[i] + " gridIds");
+
+                    var specialId = specialBlockIds[i];
+                    var gridId = specialGridId[i];
+                    var gridSpace = GridManager.Instance.levelGrid[gridId].GetComponent<GridSpace>();
+                    gridSpace.PlaceSpecial(specialBlocksPrefabs, specialId, gridSpace.currentPos, false);
+                }
+                // special block rotation
+
+                for (int i = 0; i < specialBlockIds.Count; i++)
+                {
+                    Vector3 newRotation = new Vector3(specialRotationX[i], specialRotationY[i], specialRotationZ[i]);
+                    
+                    specialBlocks[i].transform.rotation = Quaternion.Euler(newRotation);
+                }
+                
+                
+                // place monster path  
+
+                for (var i = 0; i < monsterPathPosId.Count; i++)
+                {
+                    var markerPos = monsterPathPosId[i];
                     var gridSpaceObj = GridManager.Instance.levelGrid[markerPos];
                     var gridSpace = gridSpaceObj.GetComponent<GridSpace>();
 
@@ -519,7 +557,7 @@ public class LevelBuildAndPlayManager : MonoBehaviour
             yield return new WaitForSeconds(1);
             var ray = new Ray();
 
-            var marker = monsterPathPos[0].transform;
+            var marker = levelMonsterPathObjList[0].transform;
             var monsterSpawn = new Vector3(marker.transform.position.x, currentLayerId, marker.transform.position.z);
             Instantiate(monster, monsterSpawn, monster.transform.rotation);
 
@@ -542,10 +580,9 @@ public class LevelBuildAndPlayManager : MonoBehaviour
         {
             SelectSpace();
             // place block
-            if (currentCategory == BuildBlockCategory.BuildBLocks)
+            if (currentCategory == BuildBlockCategory.BuildBlocks)
             {
-                
-                selectionGameObj.GetComponent<GridSpace>().PlaceBlock(buildBlocksPrefabs, selectedBuildBlockId, selectionGameObj.transform.position);
+                selectionGameObj.GetComponent<GridSpace>().PlaceBlock(buildBlocksPrefabs, selectedBuildBlockId, selectionGameObj.transform.position, true);
             }
 
             if (currentCategory == BuildBlockCategory.Decorations)
@@ -555,7 +592,7 @@ public class LevelBuildAndPlayManager : MonoBehaviour
 
             if (currentCategory == BuildBlockCategory.Special)
             {
-                selectionGameObj.GetComponent<GridSpace>().PlaceSpecial(specialBlocks,selectedSpecialBlockId,selectionGameObj.transform.position);
+                selectionGameObj.GetComponent<GridSpace>().PlaceSpecial(specialBlocksPrefabs, selectedSpecialBlockId, selectionGameObj.transform.position, true);
             }
 
             // do the other category
@@ -577,7 +614,7 @@ public class LevelBuildAndPlayManager : MonoBehaviour
     private void RemovePath()
     {
         // Still needs to reverse the placed marker values on the spaces.
-        monsterPath.RemoveAt(monsterPath.Count - 1);
+        monsterPathPosId.RemoveAt(monsterPathPosId.Count - 1);
     }
 
     private void SelectSpace()
@@ -671,19 +708,65 @@ public class LevelBuildAndPlayManager : MonoBehaviour
 
     public void SaveLevel()
     {
+        //build blocks
+        levelBlocksIds.Clear();
+        buildBlockGridIds.Clear();
+        blockRotationX.Clear();
+        blockRotationY.Clear();
+        blockRotationZ.Clear();
+
+        //special blocks
+        specialBlockIds.Clear();
+        specialGridId.Clear();
+        levelSpecialRotationX.Clear();
+        levelSpecialRotationY.Clear();
+        levelSpecialRotationZ.Clear();
+
+        // may change 
+        monsterPathPosId.Clear();
+
+
         foreach (var levelBlock in levelBlocks)
         {
-            var instance = levelBlock.GetComponent<BuildBlock>();
-            var blockId = instance.buildBlockId;
-            var gridId = instance.pairId;
+            GridBlock instance = levelBlock.GetComponent<GridBlock>();
+            Quaternion rotation = levelBlock.transform.rotation;
 
-            levelBLocksIds.Add(blockId);
-            blockGridIds.Add(gridId);
+            int blockId = instance.buildBlockId;
+            int gridId = instance.pairId;
+
+            blockRotationX.Add(rotation.eulerAngles.x);
+            blockRotationY.Add(rotation.eulerAngles.y);
+            blockRotationZ.Add(rotation.eulerAngles.z);
+
+            levelBlocksIds.Add(blockId);
+            buildBlockGridIds.Add(gridId);
         }
+
+        foreach (var specialBlock in specialBlocks)
+        {
+            var instance = specialBlock.GetComponent<GridBlock>();
+            Quaternion rotation = specialBlock.transform.rotation;
+            
+            var specialId = instance.specialBlockId;
+            var gridId = instance.pairId;
+            
+            specialRotationX.Add(rotation.eulerAngles.x);
+            specialRotationY.Add(rotation.eulerAngles.y);
+            specialRotationZ.Add(rotation.eulerAngles.z);
+            
+            specialBlockIds.Add(specialId);
+            specialGridId.Add(gridId);
+        }
+
+        foreach (var marker in levelMonsterPathPosId)
+        {
+            monsterPathPosId.Add(marker);
+        }
+
 
         SaveLoad.Save();
     }
-
+    
     public void EnterPlayMode() // button
     {
         UserInterfaceManager.Instance.mainUi.SetActive(false);
@@ -691,7 +774,7 @@ public class LevelBuildAndPlayManager : MonoBehaviour
         ChangeMode(ControlModes.PlayingLevel);
     }
 
-    public void EnterBuildMode()
+    public void EnterBuildMode()// button
     {
         UserInterfaceManager.Instance.mainUi.SetActive(true);
         UserInterfaceManager.Instance.playUi.SetActive(false);

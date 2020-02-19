@@ -9,18 +9,23 @@ public class SaveData
     public List<int> buildArea;
 
     //block positions
-    public List<int> gridIds;
+    public List<int> buildBlockGridIds = new List<int>();//build blocks
+    public List<int> specialBlockGridIds = new List<int>();//special blocks
     
-    //block rotation
-    public List<Vector3> blockRotation;
-    public List<float> blockRotationX;
-    public List<float> blockRotationY;
-    public List<float> blockRotationZ;
-    
+    //block rotation build blocks
+    public List<float> blockRotationX = new List<float>();
+    public List<float> blockRotationY = new List<float>();
+    public List<float> blockRotationZ = new List<float>();
+
+    //block rotation special blocks
+    public List<float> specialRotationX = new List<float>();
+    public List<float> specialRotationY = new List<float>();
+    public List<float> specialRotationZ = new List<float>();
 
     //prefab id
-    public List<int> levelBlocksIds;
+    public List<int> levelBlocksIds = new List<int>();
+    public List<int> specialBlockIds = new List<int>();
 
     //Monster path markers (accessed by number in grid)
-    public List<int> monsterPath;
+    public List<int> monsterPath = new List<int>();
 }

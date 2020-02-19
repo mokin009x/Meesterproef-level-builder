@@ -8,14 +8,22 @@ public class UserInterfaceManager : MonoBehaviour
 {
     public static UserInterfaceManager Instance;
 
-    [Header("category toggle button lists")]
-    public List<GameObject> buildBlockButtons = new List<GameObject>();
-
-    public List<string> buildBLockNames = new List<string>();
 
     // Categories
-    [Header("category toggle buttons")] 
+    [Header("category toggle buttons")]
     public GameObject buildBlocksToggle;
+    public GameObject specialBlocksToggle;
+    public GameObject decorationBlocksToggle;
+
+    [Header("button handles")] 
+    public GameObject buildBlockHandle;
+    public GameObject specialBlockHandle;
+    public GameObject decorationBlockHandle;
+    
+    [Header("CategoryUiElements")]
+    public List<GameObject> specialBlockButtons = new List<GameObject>();
+    public List<GameObject> buildBlockButtons = new List<GameObject>();
+    public List<GameObject> decorationBlockButtons = new List<GameObject>();
 
     [Header("pop up ui elements")] 
     public GameObject cameraUiButtonsToggle;
@@ -23,22 +31,20 @@ public class UserInterfaceManager : MonoBehaviour
     [Header("name identifier lists")] // this is stupid and i know their are better ways.
     public List<string> categoryNames = new List<string>();
 
-    public List<GameObject> decorationBlockButtons = new List<GameObject>();
-    public GameObject decorationBlocksToggle;
+    public List<string> buildBLockNames = new List<string>();
+
     public GameObject mainCategorySelectionBackground;
 
-    [Header("main ui elements")] 
+    [Header("main ui elements")]
     public GameObject mainUi;
 
     public Color notSelectedColor;
     public GameObject playUi;
 
-    [Header("misc")] 
+    [Header("misc")]
     public Color selectionColor;
 
     public TextMeshProUGUI selectionText;
-    public List<GameObject> specialBlockButtons = new List<GameObject>();
-    public GameObject specialBlocksToggle;
     public GameObject subCategorySelectionBackground;
     public GameObject dummyCategory; // fallback if null
     public LevelBuildAndPlayManager buildManager;
@@ -69,7 +75,7 @@ public class UserInterfaceManager : MonoBehaviour
         //decorationBlocksToggle.SetActive(true);
         //specialBlocksToggle.SetActive(true);
         DefaultInterfaceState();
-        StartCoroutine(AssignMainCategoryBackground(LevelBuildAndPlayManager.Instance.currentCategory));
+        StartCoroutine(AssignMainCategoryBackgroundOnStart(LevelBuildAndPlayManager.Instance.currentCategory));
     }
 
     // Update is called once per frame
@@ -83,7 +89,7 @@ public class UserInterfaceManager : MonoBehaviour
 
         if (buttonId == 0) //Build block place tool
         {
-            if (buildManager.pairTeleporterObj != null)
+            if (buildManager.pairTeleporterObj1 != null)
             {   
                 
             }
@@ -125,34 +131,58 @@ public class UserInterfaceManager : MonoBehaviour
 
         //Categories
         if (buttonId == 7) //switch to buildBlocks
-        {
-           // CatalogueReset();
-            buildBlocksToggle.SetActive(true);
+        { 
+            CatalogueReset();
+            buildBlockHandle.SetActive(true);
+            ChangeMainCategoryBackground(0);
+            LevelBuildAndPlayManager.Instance.currentCategory = LevelBuildAndPlayManager.BuildBlockCategory.BuildBlocks;
         }
 
         if (buttonId == 8) //switch to decorationBlocks
         {
-            //CatalogueReset();
-            decorationBlocksToggle.SetActive(true);
+            CatalogueReset();
+            decorationBlockHandle.SetActive(true);
+            ChangeMainCategoryBackground(1);
+            LevelBuildAndPlayManager.Instance.currentCategory = LevelBuildAndPlayManager.BuildBlockCategory.Decorations;
         }
 
         if (buttonId == 9) //Switch to specialBlocks
         {
-            //CatalogueReset();
-            specialBlocksToggle.SetActive(true);
+            CatalogueReset();
+            specialBlockHandle.SetActive(true);
+            ChangeMainCategoryBackground(2);
+            LevelBuildAndPlayManager.Instance.currentCategory = LevelBuildAndPlayManager.BuildBlockCategory.Special;
         }
     }
 
-    public void SelectBuildBlock(int prefabId)
+    public void CatalogueReset()//resets
     {
+        buildBlockHandle.SetActive(false);
+        decorationBlockHandle.SetActive(false);
+        specialBlockHandle.SetActive(false);
+    }
+
+    public void SelectBuildBlock(int prefabId)
+    { 
         int selectedBlockId = prefabId;
+        
+        subCategorySelectionBackground.GetComponent<Image>().color = notSelectedColor; 
+        LevelBuildAndPlayManager.Instance.selectedBuildBlockId = selectedBlockId; 
+        subCategorySelectionBackground = buildBlockButtons[selectedBlockId]; 
+        subCategorySelectionBackground.GetComponent<Image>().color = selectionColor; 
+        UpdateSelectionText(0); 
+        //LevelBuildAndPlayManager.Instance.selectedBuildBlock = LevelBuildAndPlayManager.Instance.buildBlocksPrefabs[prefabId];
+    }
+
+    public void SelectSpecialBlock(int prefabId)
+    {
+        int specialBlockId = prefabId;
 
         subCategorySelectionBackground.GetComponent<Image>().color = notSelectedColor;
-        LevelBuildAndPlayManager.Instance.selectedBuildBlockId = selectedBlockId;
-        subCategorySelectionBackground = buildBlockButtons[selectedBlockId];
+        LevelBuildAndPlayManager.Instance.selectedSpecialBlockId = specialBlockId;
+        subCategorySelectionBackground = specialBlockButtons[specialBlockId];
         subCategorySelectionBackground.GetComponent<Image>().color = selectionColor;
         UpdateSelectionText(0);
-        //LevelBuildAndPlayManager.Instance.selectedBuildBlock = LevelBuildAndPlayManager.Instance.buildBlocksPrefabs[prefabId];
     }
 
     public void SelectTower(int id)
@@ -161,8 +191,9 @@ public class UserInterfaceManager : MonoBehaviour
         subCategorySelectionBackground = towerButtons[id];
         subCategorySelectionBackground.GetComponent<Image>().color = selectionColor;
         LevelBuildAndPlayManager.Instance.currentTower = LevelBuildAndPlayManager.Instance.defenceTowers[id];
-        UpdateSelectionText(1);
+        //UpdateSelectionText(1);
     }
+    
 
     /*public void CatalogueReset()
     {
@@ -188,7 +219,8 @@ public class UserInterfaceManager : MonoBehaviour
         }
 
         string categoryName = "no category";
-        if (category == LevelBuildAndPlayManager.BuildBlockCategory.BuildBLocks)
+        
+        if (category == LevelBuildAndPlayManager.BuildBlockCategory.BuildBlocks)
         {
             categoryName = categoryNames[0];
         }
@@ -215,12 +247,34 @@ public class UserInterfaceManager : MonoBehaviour
         //default category
     }
 
-    private IEnumerator AssignMainCategoryBackground(LevelBuildAndPlayManager.BuildBlockCategory category) //this button is not used yet
+    public void ChangeMainCategoryBackground(int categoryId)
     {
-       
+        
+        mainCategorySelectionBackground.GetComponent<Image>().color = notSelectedColor;
+        
+        if (categoryId == 0)
+        {
+            mainCategorySelectionBackground = buildBlocksToggle;
+        }
+        
+        if (categoryId == 1)
+        {
+            mainCategorySelectionBackground = decorationBlocksToggle;
+        }
+        
+        if (categoryId == 2)
+        {
+            mainCategorySelectionBackground = specialBlocksToggle;
+        }
 
+        mainCategorySelectionBackground.GetComponent<Image>().color = selectionColor;
+
+    }
+    
+    private IEnumerator AssignMainCategoryBackgroundOnStart(LevelBuildAndPlayManager.BuildBlockCategory category) //this button is not used yet
+    {
         yield return new WaitForSeconds(1);
-        if (category == LevelBuildAndPlayManager.BuildBlockCategory.BuildBLocks)
+        if (category == LevelBuildAndPlayManager.BuildBlockCategory.BuildBlocks)
         {
             mainCategorySelectionBackground = buildBlocksToggle;
         }
@@ -236,10 +290,10 @@ public class UserInterfaceManager : MonoBehaviour
         }
 
         if (mainCategorySelectionBackground == null)
-        {
-           mainCategorySelectionBackground = dummyCategory;
+        { 
+            mainCategorySelectionBackground = dummyCategory;
         }
-        
+
         mainCategorySelectionBackground.GetComponent<Image>().color = selectionColor;
     }
 }

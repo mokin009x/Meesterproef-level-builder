@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 
-public class BuildBlock : MonoBehaviour
+public class GridBlock : MonoBehaviour
 {
     public int buildBlockId;
+    public int specialBlockId;
     public GridSpace gridSpacePair;
     public int pairId;
     public bool walkable;

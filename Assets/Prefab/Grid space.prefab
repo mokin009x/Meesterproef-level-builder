@@ -93,6 +93,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buildBlock: {fileID: 0}
+  specialBlock: {fileID: 0}
   currentPos: {x: 0, y: 0, z: 0}
 --- !u!65 &2395342695268488079
 BoxCollider:

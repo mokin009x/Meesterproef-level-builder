@@ -7,7 +7,6 @@ using UnityEngine.AI;
 
 public class Teleporter : MonoBehaviour
 {
-    private LevelBuildAndPlayManager bManager;
 
     public GameObject pair;
     // Start is called before the first frame update
@@ -18,18 +17,21 @@ public class Teleporter : MonoBehaviour
 
     void Start()
     {
-        bManager = LevelBuildAndPlayManager.Instance;
-        if (bManager.teleporterPair == false)
+        
+        /*if (bManager.teleporterPair == false)
         {
-            bManager.pairTeleporterObj = this.gameObject;
+            bManager.pairTeleporterObj1 = this.gameObject;
             bManager.teleporterPair = true;
         }
 
         if (bManager.teleporterPair == true && bManager.teleporterPair == true)
         {
-            pair = bManager.pairTeleporterObj;
+            pair = bManager.pairTeleporterObj1;
             pair.GetComponent<Teleporter>().pair = this.gameObject;
-        }
+            // place reset
+            bManager.pairTeleporterObj1 = null;
+            bManager.teleporterPair = false;
+        }*/
         // later make it so that when the second teleporter
         // isnt placed the first one destroys itself
     }
@@ -40,32 +42,48 @@ public class Teleporter : MonoBehaviour
         
     }
 
+    public void AssignPairStage1()
+    {
+        LevelBuildAndPlayManager.Instance.teleporterPair = true; 
+        LevelBuildAndPlayManager.Instance.pairTeleporterObj1 = this.gameObject;
+    }
+
+    public void AssignPairStage2()
+    {
+        //assign both pairs
+        this.gameObject.GetComponent<BoxCollider>().enabled = false;
+        LevelBuildAndPlayManager.Instance.pairTeleporterObj2 = this.gameObject;
+        pair = LevelBuildAndPlayManager.Instance.pairTeleporterObj1;
+        pair.GetComponent<Teleporter>().pair = LevelBuildAndPlayManager.Instance.pairTeleporterObj2;
+        
+        //reset
+        LevelBuildAndPlayManager.Instance.teleporterPair = false;
+        LevelBuildAndPlayManager.Instance.pairTeleporterObj1 = null;
+        LevelBuildAndPlayManager.Instance.pairTeleporterObj2 = null;
+    }
+
     public void Cancel()
     {
-        bManager.pairTeleporterObj = null;
-        bManager.teleporterPair = false; 
+        LevelBuildAndPlayManager.Instance.pairTeleporterObj1 = null;
+        LevelBuildAndPlayManager.Instance.teleporterPair = false; 
+        DestroyPortals();
     }
 
     public void DestroyPortals()
     {
-        
+        Destroy(pair);
+        Destroy(this.gameObject);
     }
 
     public void TransportUnit(GameObject unit)
     {
         Enemy enemy = unit.GetComponent<Enemy>();
         
-        enemy.TeleportUpdate();
+        //enemy.TeleportUpdate();
 
-        unit.transform.position = pair.transform.position;
+        enemy.agent.Warp(pair.transform.position);
 
     }
 
-    private void OnCollisionEnter(Collision coll)
-    {
-        if (coll.gameObject.CompareTag("Enemy"))
-        {
-            TransportUnit(coll.gameObject);
-        }
-    }
+ 
 }

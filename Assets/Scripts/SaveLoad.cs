@@ -14,14 +14,26 @@ public class SaveLoad
         FileStream file = File.Open(Application.persistentDataPath + "/save.dat", FileMode.OpenOrCreate);
         SaveData saveData = new SaveData();
         
-        
-        saveData.levelBlocksIds = LevelBuildAndPlayManager.Instance.levelBLocksIds;
-        saveData.gridIds = LevelBuildAndPlayManager.Instance.blockGridIds;
-        saveData.monsterPath = LevelBuildAndPlayManager.Instance.monsterPath;
-        saveData.buildArea = LevelBuildAndPlayManager.Instance.buildArea;
+        //build blocks
+        saveData.levelBlocksIds = LevelBuildAndPlayManager.Instance.levelBlocksIds;
+        saveData.buildBlockGridIds = LevelBuildAndPlayManager.Instance.buildBlockGridIds;
+        //build block rotation
         saveData.blockRotationX = LevelBuildAndPlayManager.Instance.blockRotationX;
         saveData.blockRotationY = LevelBuildAndPlayManager.Instance.blockRotationY;
         saveData.blockRotationZ = LevelBuildAndPlayManager.Instance.blockRotationZ;
+        //special blocks
+        saveData.specialBlockIds = LevelBuildAndPlayManager.Instance.specialBlockIds;
+        saveData.specialBlockGridIds = LevelBuildAndPlayManager.Instance.specialGridId;
+        //special block rotation
+        saveData.specialRotationX = LevelBuildAndPlayManager.Instance.specialRotationX;
+        saveData.specialRotationY = LevelBuildAndPlayManager.Instance.specialRotationY;
+        saveData.specialRotationZ = LevelBuildAndPlayManager.Instance.specialRotationZ;
+        
+        //misc tools
+        saveData.monsterPath = LevelBuildAndPlayManager.Instance.monsterPathPosId;
+        saveData.buildArea = LevelBuildAndPlayManager.Instance.buildArea;
+        
+        
 
         bf.Serialize(file, saveData);
         Debug.Log("Saved File: " + file.Name);
@@ -37,17 +49,28 @@ public class SaveLoad
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(Application.persistentDataPath + "/save.dat", FileMode.Open);
             SaveData saveData = (SaveData) bf.Deserialize(file);
-
-
-            LevelBuildAndPlayManager.Instance.levelBLocksIds = saveData.levelBlocksIds;
-            LevelBuildAndPlayManager.Instance.blockGridIds = saveData.gridIds;
-            LevelBuildAndPlayManager.Instance.monsterPath = saveData.monsterPath;
-            LevelBuildAndPlayManager.Instance.buildArea = saveData.buildArea;
+            
+            // build blocks
+            LevelBuildAndPlayManager.Instance.levelBlocksIds = saveData.levelBlocksIds;
+            LevelBuildAndPlayManager.Instance.buildBlockGridIds = saveData.buildBlockGridIds;
+            //build block rotation 
             LevelBuildAndPlayManager.Instance.blockRotationX = saveData.blockRotationX;
             LevelBuildAndPlayManager.Instance.blockRotationY = saveData.blockRotationY;
             LevelBuildAndPlayManager.Instance.blockRotationZ = saveData.blockRotationZ;
-
-
+            
+            //special blocks
+            LevelBuildAndPlayManager.Instance.specialBlockIds = saveData.specialBlockIds;
+            LevelBuildAndPlayManager.Instance.specialGridId = saveData.specialBlockGridIds;
+            //special block rotation
+             LevelBuildAndPlayManager.Instance.specialRotationX = saveData.specialRotationX;
+             LevelBuildAndPlayManager.Instance.specialRotationY = saveData.specialRotationY;
+             LevelBuildAndPlayManager.Instance.specialRotationZ = saveData.specialRotationZ;
+            
+            //misc tools
+            LevelBuildAndPlayManager.Instance.monsterPathPosId = saveData.monsterPath;
+            LevelBuildAndPlayManager.Instance.buildArea = saveData.buildArea;
+            
+            
 
             Debug.Log("Loaded File: " + file.Name);
             file.Close();

@@ -576,9 +576,10 @@ GameObject:
   - component: {fileID: 9100332045406610691}
   - component: {fileID: 8784397469963287650}
   - component: {fileID: 759210318921871344}
+  - component: {fileID: 7792810818462885723}
   m_Layer: 0
   m_Name: Robot unit
-  m_TagString: Enemy
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -633,10 +634,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 652a5526af917184a8e1a95c8364788c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  agent: {fileID: 0}
+  currentMarker: {fileID: 0}
   markerNumber: 0
   path: []
-  currentMarker: {fileID: 0}
-  agent: {fileID: 0}
+--- !u!65 &7792810818462885723
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5193079315033904912}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.4766419, y: 0.43296385, z: 0.38896912}
+  m_Center: {x: 0.003772378, y: 0.28351808, z: -0.007695526}
 --- !u!1 &5380507336860429210
 GameObject:
   m_ObjectHideFlags: 0
