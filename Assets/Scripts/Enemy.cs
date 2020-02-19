@@ -34,7 +34,7 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (agent.remainingDistance < 0.1f)
+        if (agent.remainingDistance < 0.3f)
         {
             if (markerNumber == path.Count - 1)
             {

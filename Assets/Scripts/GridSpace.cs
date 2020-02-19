@@ -76,8 +76,6 @@ public class GridSpace : MonoBehaviour
                 }
             }
             
-            
-            
            
             GridBlock gridBlockClass = specialBlock.GetComponent<GridBlock>();
             gridBlockClass.gridSpacePair = GridManager.Instance.levelGrid[values.gridId].GetComponent<GridSpace>();
@@ -130,9 +128,7 @@ public class GridSpace : MonoBehaviour
             LevelBuildAndPlayManager.Instance.levelBlocks.Remove(buildBlock);
         }
     }
-
-   
-
+    
     public void MonsterPathMarkerPlace(GameObject marker, Vector3 position)
     {
         if (values.hasMarker != true)
@@ -146,13 +142,13 @@ public class GridSpace : MonoBehaviour
         }
     }
 
-    public void BuildAreaAssign(GameObject buildAreaMarker)
+    public void BuildAreaAssign(GameObject buildAreaMarker, Vector3 position)
     {
         if (values.buildArea != true)
         {
             values.buildArea = true;
-            // make block block static for navMesh or leave it off
-            // gameObject.isStatic = true;
+            Instantiate(buildAreaMarker, position, Quaternion.identity);
+            
             LevelBuildAndPlayManager.Instance.buildArea.Add(values.gridId);
         }
     }

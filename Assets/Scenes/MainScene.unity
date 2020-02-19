@@ -8567,7 +8567,8 @@ MonoBehaviour:
   - {fileID: 4286945631088265539, guid: 6977ed021f0cadf44afc56a9d0dfdf72, type: 3}
   specialBlocksPrefabs:
   - {fileID: 6160735364819323086, guid: c14744cb5218d8049884b46f32e94631, type: 3}
-  buildAreaMarker: {fileID: 0}
+  buildAreaMarker: {fileID: 1068929099469187420, guid: 3e4ee0d1e499fc842bdb764ac2a606ef,
+    type: 3}
   cameraMarker: {fileID: 7627782}
   cameraRotating: 0
   cameraSpeed: 3
@@ -8609,6 +8610,8 @@ MonoBehaviour:
   monsterPathPosId: 
   monsterPrefabs:
   - {fileID: 5193079315033904912, guid: e23fed2ec56db444a9910dafd23002d5, type: 3}
+  bossWave:
+  - {fileID: 9193032568483340229, guid: dd7233cd800a6f14d8ad043b39331fd9, type: 3}
   teleporterPair: 0
   pairTeleporterObj1: {fileID: 0}
   pairTeleporterObj2: {fileID: 0}

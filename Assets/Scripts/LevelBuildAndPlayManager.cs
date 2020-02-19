@@ -109,6 +109,7 @@ public class LevelBuildAndPlayManager : MonoBehaviour
     public GameObject monsterPathMarker;
     public List<int> monsterPathPosId = new List<int>(); // position id
     public List<GameObject> monsterPrefabs = new List<GameObject>();
+    public List<GameObject> bossWave = new List<GameObject>();
     
     //teleporter exclusive
     public bool teleporterPair;//pairing mode
@@ -481,9 +482,9 @@ public class LevelBuildAndPlayManager : MonoBehaviour
                 {
                     var buildAreaPos = buildArea[i];
                     var gridSpace = GridManager.Instance.levelGrid[buildAreaPos].GetComponent<GridSpace>();
-
-                    gridSpace.values.buildArea = true;
-                    Debug.Log(gridSpace.values.buildArea);
+                    var position = gridSpace.transform.position;
+                    
+                    gridSpace.BuildAreaAssign(buildAreaMarker, position);
                 }
             }
             //camera and layers
@@ -530,6 +531,11 @@ public class LevelBuildAndPlayManager : MonoBehaviour
                 StartCoroutine(StartMonsterWave());
             }
 
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                StartCoroutine(SpawnBoss());
+            }
+
             if (Input.GetKeyDown(KeyCode.M)) // switch mode
             {
                 UserInterfaceManager.Instance.playUi.SetActive(false);
@@ -561,6 +567,25 @@ public class LevelBuildAndPlayManager : MonoBehaviour
             marker.GetComponent<MeshRenderer>().enabled = false;
         }*/
         foreach (var monster in monsterPrefabs)
+        {
+            Debug.Log("Monsters will spawn");
+            yield return new WaitForSeconds(1);
+            var ray = new Ray();
+
+            var marker = levelMonsterPathObjList[0].transform;
+            var monsterSpawn = new Vector3(marker.transform.position.x, currentLayerId, marker.transform.position.z);
+            Instantiate(monster, monsterSpawn, monster.transform.rotation);
+
+
+            yield return new WaitForSeconds(2);
+        }
+
+        Debug.Log("WAVE END");
+    }
+
+    private IEnumerator SpawnBoss()
+    {
+        foreach (var monster in bossWave)
         {
             Debug.Log("Monsters will spawn");
             yield return new WaitForSeconds(1);
@@ -616,7 +641,7 @@ public class LevelBuildAndPlayManager : MonoBehaviour
         if (currentTool == Tools.BuildAreaAssign)
         {
             SelectSpace();
-            selectionGameObj.GetComponent<GridSpace>().BuildAreaAssign(buildAreaMarker);
+            selectionGameObj.GetComponent<GridSpace>().BuildAreaAssign(buildAreaMarker, selectionGameObj.transform.position);
         }
     }
 
