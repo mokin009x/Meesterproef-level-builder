@@ -404,17 +404,26 @@ public class LevelBuildAndPlayManager : MonoBehaviour
             {
                 SaveLevel();
             }
+            
+            if (Input.GetKeyDown(KeyCode.O))
+            {
+                SaveDemo();
+            }
+
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                SaveLoad.LoadDemo();
+            }
 
             // load level( to be put in a method for button later)
 
             if (Input.GetKeyDown(KeyCode.L))
             {
-                SaveLoad.Load();
+                SaveLoad.Load(); 
             }
-
+            
             //if level is loaded this will reconstruct the level
-            if (Input.GetKeyDown(
-                KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space))
             {
                 // placing building blocks
                 for (var i = 0; i < levelBlocksIds.Count; i++)
@@ -766,7 +775,68 @@ public class LevelBuildAndPlayManager : MonoBehaviour
 
         SaveLoad.Save();
     }
-    
+
+    public void SaveDemo()
+    {
+        //build blocks
+        levelBlocksIds.Clear();
+        buildBlockGridIds.Clear();
+        blockRotationX.Clear();
+        blockRotationY.Clear();
+        blockRotationZ.Clear();
+
+        //special blocks
+        specialBlockIds.Clear();
+        specialGridId.Clear();
+        levelSpecialRotationX.Clear();
+        levelSpecialRotationY.Clear();
+        levelSpecialRotationZ.Clear();
+
+        // may change 
+        monsterPathPosId.Clear();
+
+
+        foreach (var levelBlock in levelBlocks)
+        {
+            GridBlock instance = levelBlock.GetComponent<GridBlock>();
+            Quaternion rotation = levelBlock.transform.rotation;
+
+            int blockId = instance.buildBlockId;
+            int gridId = instance.pairId;
+
+            blockRotationX.Add(rotation.eulerAngles.x);
+            blockRotationY.Add(rotation.eulerAngles.y);
+            blockRotationZ.Add(rotation.eulerAngles.z);
+
+            levelBlocksIds.Add(blockId);
+            buildBlockGridIds.Add(gridId);
+        }
+
+        foreach (var specialBlock in specialBlocks)
+        {
+            var instance = specialBlock.GetComponent<GridBlock>();
+            Quaternion rotation = specialBlock.transform.rotation;
+            
+            var specialId = instance.specialBlockId;
+            var gridId = instance.pairId;
+            
+            specialRotationX.Add(rotation.eulerAngles.x);
+            specialRotationY.Add(rotation.eulerAngles.y);
+            specialRotationZ.Add(rotation.eulerAngles.z);
+            
+            specialBlockIds.Add(specialId);
+            specialGridId.Add(gridId);
+        }
+
+        foreach (var marker in levelMonsterPathPosId)
+        {
+            monsterPathPosId.Add(marker);
+        }
+
+
+        SaveLoad.SaveDemo();
+    }
+
     public void EnterPlayMode() // button
     {
         UserInterfaceManager.Instance.mainUi.SetActive(false);

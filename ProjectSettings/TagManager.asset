@@ -7,6 +7,7 @@ TagManager:
   - Enemy
   - Walkable
   - Tool Tip Button
+  - Portal
   layers:
   - Default
   - TransparentFX

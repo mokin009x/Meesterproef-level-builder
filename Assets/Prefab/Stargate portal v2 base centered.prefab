@@ -529,11 +529,11 @@ GameObject:
   - component: {fileID: 5092728766853592158}
   - component: {fileID: 4700368427673775212}
   - component: {fileID: 461028064315181625}
-  - component: {fileID: 660231304013709144}
   - component: {fileID: -644499119530620167}
+  - component: {fileID: 5053774578447484020}
   m_Layer: 0
   m_Name: Stargate portal v2 base centered
-  m_TagString: Enemy
+  m_TagString: Portal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -600,7 +600,20 @@ MonoBehaviour:
   gridSpacePair: {fileID: 0}
   pairId: 0
   walkable: 0
---- !u!54 &660231304013709144
+--- !u!114 &-644499119530620167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6160735364819323086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15ef5085cd38ba84c90cd3fbde055725, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pair: {fileID: 0}
+--- !u!54 &5053774578447484020
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -615,20 +628,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 126
-  m_CollisionDetection: 2
---- !u!114 &-644499119530620167
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6160735364819323086}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15ef5085cd38ba84c90cd3fbde055725, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pair: {fileID: 0}
+  m_CollisionDetection: 1
 --- !u!1 &6615501789173900590
 GameObject:
   m_ObjectHideFlags: 0

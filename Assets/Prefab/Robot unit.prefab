@@ -579,7 +579,7 @@ GameObject:
   - component: {fileID: 7792810818462885723}
   m_Layer: 0
   m_Name: Robot unit
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -634,6 +634,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 652a5526af917184a8e1a95c8364788c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hp: 10
+  speed: 1
   agent: {fileID: 0}
   currentMarker: {fileID: 0}
   markerNumber: 0

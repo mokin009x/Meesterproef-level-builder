@@ -17,23 +17,7 @@ public class Teleporter : MonoBehaviour
 
     void Start()
     {
-        
-        /*if (bManager.teleporterPair == false)
-        {
-            bManager.pairTeleporterObj1 = this.gameObject;
-            bManager.teleporterPair = true;
-        }
-
-        if (bManager.teleporterPair == true && bManager.teleporterPair == true)
-        {
-            pair = bManager.pairTeleporterObj1;
-            pair.GetComponent<Teleporter>().pair = this.gameObject;
-            // place reset
-            bManager.pairTeleporterObj1 = null;
-            bManager.teleporterPair = false;
-        }*/
-        // later make it so that when the second teleporter
-        // isnt placed the first one destroys itself
+       
     }
 
     // Update is called once per frame

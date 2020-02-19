@@ -6,7 +6,7 @@ using UnityEngine;
 public class SaveData
 {
     //buildArea (accessed by number in grid)
-    public List<int> buildArea;
+    public List<int> buildArea =new List<int>();
 
     //block positions
     public List<int> buildBlockGridIds = new List<int>();//build blocks
