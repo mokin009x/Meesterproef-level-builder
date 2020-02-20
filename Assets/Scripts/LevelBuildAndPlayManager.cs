@@ -83,6 +83,7 @@ public class LevelBuildAndPlayManager : MonoBehaviour
 
     // monster path
     public List<int> levelMonsterPathPosId = new List<int>();
+    public List<GameObject> levelMonsterPathObjList = new List<GameObject>();
 
     //build area
     public List<int> buildArea = new List<int>();
@@ -104,7 +105,6 @@ public class LevelBuildAndPlayManager : MonoBehaviour
     
     
     //monster path
-    public List<GameObject> levelMonsterPathObjList = new List<GameObject>();
 
     public GameObject monsterPathMarker;
     public List<int> monsterPathPosId = new List<int>(); // position id
@@ -151,7 +151,7 @@ public class LevelBuildAndPlayManager : MonoBehaviour
         currentControlMode = ControlModes.BuildingLevel;
     }
 
-    public void ColorUpdate()
+    public void GridSelectionColorUpdate()
     {
         if (_saturate == false)
         {
@@ -183,6 +183,8 @@ public class LevelBuildAndPlayManager : MonoBehaviour
             _saturate = false;
         }
     }
+    
+    
 
     public LayerMask SwitchLayer(int layerId)
     {
@@ -241,7 +243,7 @@ public class LevelBuildAndPlayManager : MonoBehaviour
     private void GridVisualPositionUpdate()
     {
         SelectSpace();
-        ColorUpdate();
+        GridSelectionColorUpdate();
 
 
         if (selectionGameObj != null)
@@ -306,58 +308,7 @@ public class LevelBuildAndPlayManager : MonoBehaviour
                     RemovePath();
                 }
             }
-
-            // camera controls
-            if (Input.GetKey(KeyCode.W))
-            {
-                MoveCamera("Forwards");
-            }
-
-            if (Input.GetKey(KeyCode.A))
-            {
-                MoveCamera("Left");
-            }
-
-            if (Input.GetKey(KeyCode.S))
-            {
-                MoveCamera("Backwards");
-            }
-
-            if (Input.GetKey(KeyCode.D))
-            {
-                MoveCamera("Right");
-            }
-
-            if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A))
-            {
-                MoveCamera("Left and Forwards");
-            }
-
-            if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D))
-            {
-                MoveCamera("Right and Forwards");
-            }
-
-            if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.S))
-            {
-                MoveCamera("Right and Backwards");
-            }
-
-            if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.S)) //camera movement
-            {
-                MoveCamera("left and Backwards");
-            }
-
-            if (Input.GetKeyDown(KeyCode.Q)) // camera rotate
-            {
-                RotateCamera("Clockwise");
-            }
-
-            if (Input.GetKeyDown(KeyCode.E)) // camera rotate
-            {
-                RotateCamera("Counter Clockwise");
-            }
-
+            
             if (Input.GetKeyDown(KeyCode.Period))
             {
                 int directionId = (int) visualDirection;
@@ -487,29 +438,81 @@ public class LevelBuildAndPlayManager : MonoBehaviour
                     gridSpace.BuildAreaAssign(buildAreaMarker, position);
                 }
             }
-            //camera and layers
+        }
+        
+        // camera controls
+        if (Input.GetKey(KeyCode.W))
+        {
+            MoveCamera("Forwards");
+        }
 
-            if (Input.GetKeyDown(KeyCode.Equals))
+        if (Input.GetKey(KeyCode.A))
+        {
+            MoveCamera("Left");
+        }
+
+        if (Input.GetKey(KeyCode.S))
+        {
+            MoveCamera("Backwards");
+        }
+
+        if (Input.GetKey(KeyCode.D))
+        {
+            MoveCamera("Right");
+        }
+
+        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A))
+        {
+            MoveCamera("Left and Forwards");
+        }
+
+        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D))
+        {
+            MoveCamera("Right and Forwards");
+        }
+
+        if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.S))
+        {
+            MoveCamera("Right and Backwards");
+        }
+
+        if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.S)) //camera movement
+        {
+            MoveCamera("left and Backwards");
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q)) // camera rotate
+        {
+            RotateCamera("Clockwise");
+        }
+
+        if (Input.GetKeyDown(KeyCode.E)) // camera rotate
+        {
+            RotateCamera("Counter Clockwise");
+        }
+        
+        //camera and layers
+
+        if (Input.GetKeyDown(KeyCode.Equals))
+        {
+            if (currentLayerId >= 1 && currentLayerId < 5)
             {
-                if (currentLayerId >= 1 && currentLayerId < 5)
-                {
-                    currentLayerId = currentLayerId + 1;
+                currentLayerId = currentLayerId + 1;
 
-                    var newLayer = currentLayerId;
-                    currentLayer = SwitchLayer(newLayer);
-                    ChangeGridVisibility();
-                }
+                var newLayer = currentLayerId;
+                currentLayer = SwitchLayer(newLayer);
+                ChangeGridVisibility();
             }
+        }
 
-            if (Input.GetKeyDown(KeyCode.Minus))
+        if (Input.GetKeyDown(KeyCode.Minus))
+        {
+            if (currentLayerId <= 5 && currentLayerId > 1)
             {
-                if (currentLayerId <= 5 && currentLayerId > 1)
-                {
-                    currentLayerId = currentLayerId - 1;
-                    var newLayer = currentLayerId;
-                    currentLayer = SwitchLayer(newLayer);
-                    ChangeGridVisibility();
-                }
+                currentLayerId = currentLayerId - 1;
+                var newLayer = currentLayerId;
+                currentLayer = SwitchLayer(newLayer);
+                ChangeGridVisibility();
             }
         }
 
@@ -555,7 +558,10 @@ public class LevelBuildAndPlayManager : MonoBehaviour
         {
             var spawnTransform = selectionGameObj.transform;
             var spawnOffset = spawnTransform.position + new Vector3(0, 0.5f, 0);
-            Instantiate(tower, spawnOffset, Quaternion.Euler(visualRotation));
+            var instance = Instantiate(tower, spawnOffset, Quaternion.Euler(visualRotation));
+            instance.GetComponent<NavMeshAgent>().radius = 0.05f;
+
+            
             space.hasTower = true;
         }
     }
@@ -574,8 +580,8 @@ public class LevelBuildAndPlayManager : MonoBehaviour
 
             var marker = levelMonsterPathObjList[0].transform;
             var monsterSpawn = new Vector3(marker.transform.position.x, currentLayerId, marker.transform.position.z);
-            Instantiate(monster, monsterSpawn, monster.transform.rotation);
-
+            var instance = Instantiate(monster, monsterSpawn, monster.transform.rotation);
+            instance.GetComponent<NavMeshAgent>().radius = 0.05f;
 
             yield return new WaitForSeconds(2);
         }
@@ -648,7 +654,17 @@ public class LevelBuildAndPlayManager : MonoBehaviour
     private void RemovePath()
     {
         // Still needs to reverse the placed marker values on the spaces.
-        monsterPathPosId.RemoveAt(monsterPathPosId.Count - 1);
+        foreach (var marker in levelMonsterPathObjList)
+        {
+            Destroy(marker);
+        }
+
+        foreach (var gridId in levelMonsterPathPosId)
+        {
+            GridManager.Instance.levelGrid[gridId].GetComponent<GridSpace>().values.hasMarker = false;
+        }
+        levelMonsterPathPosId.Clear();
+        monsterPathPosId.Clear();
     }
 
     private void SelectSpace()

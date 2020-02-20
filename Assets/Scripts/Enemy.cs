@@ -31,7 +31,7 @@ public class Enemy : MonoBehaviour
         agent.destination = hit.position;
     }
 
-    // Update is called once per frame
+    //Update is called once per frame
     private void Update()
     {
         if (agent.remainingDistance < 0.3f)

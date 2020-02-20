@@ -40,7 +40,6 @@ public class GridSpace : MonoBehaviour
                 LevelBuildAndPlayManager.Instance.levelBlockRotationZ.Add(blockRotation.eulerAngles.z);
             }
             
-            
             buildBlock.GetComponent<NavMeshModifier>().area = 1;
             buildBlock.GetComponent<NavMeshModifier>().overrideArea = true;
             if (buildBlockId == 1) //soil block that is walkable
