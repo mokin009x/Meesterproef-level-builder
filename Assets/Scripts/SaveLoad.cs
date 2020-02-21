@@ -62,14 +62,13 @@ public class SaveLoad
             LevelBuildAndPlayManager.Instance.specialBlockIds = saveData.specialBlockIds;
             LevelBuildAndPlayManager.Instance.specialGridId = saveData.specialBlockGridIds;
             //special block rotation
-             LevelBuildAndPlayManager.Instance.specialRotationX = saveData.specialRotationX;
-             LevelBuildAndPlayManager.Instance.specialRotationY = saveData.specialRotationY;
-             LevelBuildAndPlayManager.Instance.specialRotationZ = saveData.specialRotationZ;
+            LevelBuildAndPlayManager.Instance.specialRotationX = saveData.specialRotationX; 
+            LevelBuildAndPlayManager.Instance.specialRotationY = saveData.specialRotationY;
+            LevelBuildAndPlayManager.Instance.specialRotationZ = saveData.specialRotationZ;
             
             //misc tools
             LevelBuildAndPlayManager.Instance.monsterPathPosId = saveData.monsterPath;
             LevelBuildAndPlayManager.Instance.buildArea = saveData.buildArea;
-            
             
 
             Debug.Log("Loaded File: " + file.Name);

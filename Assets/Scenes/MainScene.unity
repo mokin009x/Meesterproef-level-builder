@@ -1879,7 +1879,6 @@ GameObject:
   - component: {fileID: 251300972}
   - component: {fileID: 251300975}
   - component: {fileID: 251300974}
-  - component: {fileID: 251300973}
   m_Layer: 5
   m_Name: AssignTool
   m_TagString: Untagged
@@ -1907,49 +1906,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0.000015259, y: 5.15}
   m_SizeDelta: {x: 37, y: 37}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &251300973
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 251300971}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Navigation:
-    m_Mode: 3
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 251300974}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &251300974
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3041,6 +2997,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1056325359}
+        m_MethodName: AssignToolSelectionBackground
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &369930244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3398,6 +3365,17 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1056325359}
         m_MethodName: ButtonMethods
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1056325359}
+        m_MethodName: AssignToolSelectionBackground
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4792,7 +4770,6 @@ GameObject:
   - component: {fileID: 553960663}
   - component: {fileID: 553960666}
   - component: {fileID: 553960665}
-  - component: {fileID: 553960664}
   m_Layer: 5
   m_Name: PathTool
   m_TagString: Untagged
@@ -4820,49 +4797,6 @@ RectTransform:
   m_AnchoredPosition: {x: 44.2, y: 5.15}
   m_SizeDelta: {x: 37, y: 37}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &553960664
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 553960662}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Navigation:
-    m_Mode: 3
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 553960665}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &553960665
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7568,6 +7502,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1056325359}
+        m_MethodName: AssignToolSelectionBackground
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &864840971
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8193,7 +8138,6 @@ GameObject:
   - component: {fileID: 1008400742}
   - component: {fileID: 1008400745}
   - component: {fileID: 1008400744}
-  - component: {fileID: 1008400743}
   m_Layer: 5
   m_Name: PlaceTool
   m_TagString: Untagged
@@ -8221,49 +8165,6 @@ RectTransform:
   m_AnchoredPosition: {x: -41.19999, y: 5.149991}
   m_SizeDelta: {x: 37, y: 37}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1008400743
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1008400741}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Navigation:
-    m_Mode: 3
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 1008400744}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &1008400744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8595,6 +8496,7 @@ MonoBehaviour:
   levelSpecialRotationY: []
   levelSpecialRotationZ: []
   levelMonsterPathPosId: 
+  levelMonsterPathObjList: []
   buildArea: 
   buildBlockGridIds: 
   blockRotationX: []
@@ -8604,7 +8506,6 @@ MonoBehaviour:
   specialRotationX: []
   specialRotationY: []
   specialRotationZ: []
-  levelMonsterPathObjList: []
   monsterPathMarker: {fileID: 7333821971567178475, guid: 9db2b1f6ff0540c4483c6dfb98e3c926,
     type: 3}
   monsterPathPosId: 
@@ -8657,16 +8558,19 @@ MonoBehaviour:
   buildBLockNames:
   - Grass
   - Soil
-  mainCategorySelectionBackground: {fileID: 0}
   mainUi: {fileID: 856521528}
+  mainCategorySelectionBackground: {fileID: 0}
   notSelectedColor: {r: 1, g: 1, b: 1, a: 1}
   playUi: {fileID: 748230647}
+  subCategorySelectionBackground: {fileID: 0}
+  buildToolHolder: {fileID: 1008400741}
+  assignToolHolder: {fileID: 251300971}
+  pathToolHolder: {fileID: 553960662}
+  toolSelectionBackground: {fileID: 0}
   selectionColor: {r: 0.54901963, g: 0.54901963, b: 0.54901963, a: 0.54901963}
   selectionText: {fileID: 984894508}
-  subCategorySelectionBackground: {fileID: 0}
   dummyCategory: {fileID: 570797712}
   buildManager: {fileID: 1056325358}
-  toolSelectionBackground: {fileID: 0}
   towerButtons:
   - {fileID: 1068841232}
   - {fileID: 26919490}

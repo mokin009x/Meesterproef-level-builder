@@ -33,23 +33,30 @@ public class UserInterfaceManager : MonoBehaviour
 
     public List<string> buildBLockNames = new List<string>();
 
-    public GameObject mainCategorySelectionBackground;
 
     [Header("main ui elements")]
     public GameObject mainUi;
+    public GameObject mainCategorySelectionBackground;
 
     public Color notSelectedColor;
     public GameObject playUi;
+
+    [Header("sub ui elements")]
+    public GameObject subCategorySelectionBackground;
+
+    [Header("tool ui elements")] 
+    public GameObject buildToolHolder;
+    public GameObject assignToolHolder;
+    public GameObject pathToolHolder;
+    public GameObject toolSelectionBackground;
 
     [Header("misc")]
     public Color selectionColor;
 
     public TextMeshProUGUI selectionText;
-    public GameObject subCategorySelectionBackground;
     public GameObject dummyCategory; // fallback if null
     public LevelBuildAndPlayManager buildManager;
 
-    public GameObject toolSelectionBackground;
     public List<GameObject> towerButtons = new List<GameObject>();
 
     public List<string> towerNames = new List<string>();
@@ -74,8 +81,10 @@ public class UserInterfaceManager : MonoBehaviour
         //buildBlocksToggle.SetActive(true);
         //decorationBlocksToggle.SetActive(true);
         //specialBlocksToggle.SetActive(true);
+        
         DefaultInterfaceState();
         StartCoroutine(AssignMainCategoryBackgroundOnStart(LevelBuildAndPlayManager.Instance.currentCategory));
+        StartCoroutine(AssignToolSelectionBackgroundOnStart());
     }
 
     // Update is called once per frame
@@ -89,24 +98,17 @@ public class UserInterfaceManager : MonoBehaviour
 
         if (buttonId == 0) //Build block place tool
         {
-            if (buildManager.pairTeleporterObj1 != null)
-            {   
-                
-            }
             LevelBuildAndPlayManager.Instance.ChangeTool(LevelBuildAndPlayManager.Tools.BuildBlockPlace);
-            Debug.Log("test"); 
         }
 
         if (buttonId == 1) //Build area assign tool
         {
             LevelBuildAndPlayManager.Instance.ChangeTool(LevelBuildAndPlayManager.Tools.BuildAreaAssign);
-            Debug.Log("test");
         }
 
         if (buttonId == 2) //Monster path create tool
         {
             LevelBuildAndPlayManager.Instance.ChangeTool(LevelBuildAndPlayManager.Tools.MonsterPathCreate);
-            Debug.Log("test");
         }
 
         if (buttonId == 3) //Save button 
@@ -174,7 +176,7 @@ public class UserInterfaceManager : MonoBehaviour
         //LevelBuildAndPlayManager.Instance.selectedBuildBlock = LevelBuildAndPlayManager.Instance.buildBlocksPrefabs[prefabId];
     }
 
-    public void SelectSpecialBlock(int prefabId)
+    public void SelectSpecialBlock(int prefabId)//button
     {
         int specialBlockId = prefabId;
 
@@ -185,7 +187,7 @@ public class UserInterfaceManager : MonoBehaviour
         UpdateSelectionText(0);
     }
 
-    public void SelectTower(int id)
+    public void SelectTower(int id)//button
     {
         subCategorySelectionBackground.GetComponent<Image>().color = notSelectedColor;
         subCategorySelectionBackground = towerButtons[id];
@@ -245,6 +247,36 @@ public class UserInterfaceManager : MonoBehaviour
         subCategorySelectionBackground = buildBlockButtons[selectedBlockId];
         subCategorySelectionBackground.GetComponent<Image>().color = selectionColor;
         //default category
+    }
+
+    public void AssignToolSelectionBackground(int toolId)//button
+    {
+        toolSelectionBackground.GetComponent<Image>().color = notSelectedColor;
+        
+        if (toolId == 0)
+        {
+            toolSelectionBackground = buildToolHolder;
+        }
+
+        if (toolId == 1)
+        {
+            toolSelectionBackground = assignToolHolder;
+        }
+
+        if (toolId == 2)
+        {
+            toolSelectionBackground = pathToolHolder;
+        }
+        
+        toolSelectionBackground.GetComponent<Image>().color = selectionColor;
+    }
+
+    private IEnumerator AssignToolSelectionBackgroundOnStart()
+    {
+        yield return new WaitForSeconds(1f);
+        toolSelectionBackground = buildToolHolder;
+        toolSelectionBackground.GetComponent<Image>().color = selectionColor;
+
     }
 
     public void ChangeMainCategoryBackground(int categoryId)
